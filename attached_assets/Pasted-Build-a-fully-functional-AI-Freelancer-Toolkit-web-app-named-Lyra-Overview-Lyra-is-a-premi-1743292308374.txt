@@ -1,0 +1,60 @@
+Build a fully functional AI Freelancer Toolkit web app named **Lyra**.
+
+🧠 Overview:
+Lyra is a premium, modern web app that helps freelancers save time and win more clients by automating client communication and admin tasks using AI. It includes tools like proposal generation, email rewriting, pricing suggestions, contract summaries, and voice-based project briefs.
+
+💻 Tech Stack:
+- Frontend: React + Tailwind CSS
+- Backend: Node.js (Express)
+- Auth: Firebase Auth (email/password + Google login)
+- AI: OpenAI GPT-4 Turbo for all tools
+- Voice: Whisper API (or audio upload for MVP)
+- Payments: Stripe integration for Pro access
+- Deployment: Host frontend on Replit’s web container; backend via API routes
+
+🎨 Design & UI Requirements:
+- The theme should feel modern, premium, and futuristic like **bolt.new** or **ray.so**
+- Background: `#000000` (pure black)
+- Foreground: Neon **yellow** (`#FCEE09`) or **green** (`#00FF9D`) accents
+- Typography: Clean sans-serif (e.g. Inter or Satoshi)
+- Buttons and input fields should glow subtly (box-shadow or Tailwind ring + transition)
+- Panels should have soft outer glows for a sleek look
+- Entire layout should be **fully responsive**, with a mobile-friendly sidebar and fluid animations
+
+📦 Pages & Features:
+
+1. **Authentication**
+   - Firebase Auth with email/password and Google login
+   - Role-based logic for Free vs Pro users
+
+2. **Dashboard Layout**
+   - Modern sidebar with glowing icons
+   - Top bar with account details and upgrade CTA
+   - Smooth transitions between tools
+
+3. **AI Tools Included:**
+   - **📝 Proposal Writer**: Input project → get a polished, formatted proposal
+   - **📧 Email Rewriter**: Paste unpolished text → get a professional reply
+   - **💰 Pricing Assistant**: Input scope → get estimated hourly and flat rate
+   - **📄 Contract Explainer**: Paste legal copy → get plain-English summary
+   - **🎤 Voice-to-Brief**: Upload voice → get structured creative brief (MVP: use text input)
+
+4. **Stripe Integration**
+   - 3-day free trial
+   - $19/month Pro plan (unlocks all tools, unlimited generations)
+   - Billing dashboard with plan status, usage, and upgrade options
+
+5. **Tool History (Optional)**
+   - Store past generations per user
+   - Allow “copy to clipboard” and export to Notion or PDF
+
+6. **Error Handling & Loading**
+   - Skeleton loaders while AI generates
+   - Fallback messaging for failed generations
+   - Glow-based success animations
+
+7. **Environment Variables**
+   - `.env` file for Firebase config, OpenAI key, and Stripe secret key
+
+Start by scaffolding the project structure, Firebase auth, the Lyra dashboard UI, and the Proposal Writer tool with a glowing black/yellow theme. Then implement the rest of the tools and Stripe billing.
+
