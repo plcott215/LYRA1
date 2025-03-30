@@ -24,33 +24,33 @@ export function Logo({ size = "md", withText = true, className }: LogoProps) {
       <div className={cn(sizeClasses[size])}>
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g>
-            {/* Glowing effect in the background */}
-            <circle cx="50" cy="50" r="45" fill="currentColor" className="text-primary opacity-20" />
+            {/* Dark inner circle to create black center */}
+            <circle cx="50" cy="50" r="45" fill="black" />
             
-            {/* Main circular background */}
-            <circle cx="50" cy="50" r="40" fill="currentColor" className="text-primary" />
+            {/* Main eclipse ring */}
+            <circle 
+              cx="50" 
+              cy="50" 
+              r="40" 
+              stroke="currentColor" 
+              className="text-primary" 
+              strokeWidth="6"
+              strokeDasharray="251"
+              strokeDashoffset="30"
+              transform="rotate(130, 50, 50)"
+            />
             
-            {/* 'L' letter */}
-            <path 
-              d="M34 30V70H66" 
-              stroke="var(--background)" 
-              strokeWidth="8" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
-
-            {/* Sound wave lines */}
-            <path 
-              d="M55 45C60 45 65 45 70 45" 
-              stroke="var(--background)" 
-              strokeWidth="4" 
-              strokeLinecap="round" 
-            />
-            <path 
-              d="M55 55C63 55 71 55 77 55" 
-              stroke="var(--background)" 
-              strokeWidth="4" 
-              strokeLinecap="round" 
+            {/* Subtle glow for depth */}
+            <circle 
+              cx="50" 
+              cy="50" 
+              r="42" 
+              stroke="currentColor" 
+              className="text-primary opacity-20" 
+              strokeWidth="1"
+              strokeDasharray="255"
+              strokeDashoffset="25"
+              transform="rotate(130, 50, 50)"
             />
           </g>
         </svg>
