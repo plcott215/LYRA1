@@ -26,13 +26,13 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        "flex flex-1 items-center justify-between py-4 font-medium transition-all duration-200 hover:bg-muted/30 group rounded-md px-2 -mx-2 [&[data-state=open]>svg]:rotate-180 [&[data-state=open]]:bg-muted/40",
         className
       )}
       {...props}
     >
-      {children}
-      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+      <span className="transition-colors duration-200 group-hover:text-primary/80">{children}</span>
+      <ChevronDown className="h-4 w-4 shrink-0 transition-all duration-300 group-hover:text-primary/80" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ))
@@ -44,10 +44,14 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down data-[state=open]:bg-muted/20 rounded-md"
     {...props}
   >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+    <div className={cn("pb-4 pt-2 px-2 opacity-90 transition-opacity duration-200 hover:opacity-100", className)}>
+      <div className="animate-fade-in [animation-fill-mode:backwards] [animation-delay:200ms]">
+        {children}
+      </div>
+    </div>
   </AccordionPrimitive.Content>
 ))
 

@@ -2,19 +2,23 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
-      className
-    )}
-    {...props}
-  />
-))
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  hoverEffect?: boolean;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, hoverEffect = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 group",
+        hoverEffect && "hover:shadow-md hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/20",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
@@ -29,19 +33,23 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
-const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
+interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  highlightOnHover?: boolean;
+}
+
+const CardTitle = React.forwardRef<HTMLParagraphElement, CardTitleProps>(
+  ({ className, highlightOnHover = false, ...props }, ref) => (
+    <h3
+      ref={ref}
+      className={cn(
+        "text-2xl font-semibold leading-none tracking-tight",
+        highlightOnHover && "transition-colors group-hover:text-primary",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<
