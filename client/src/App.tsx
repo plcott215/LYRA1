@@ -79,6 +79,7 @@ function App() {
       <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
       <Route path="/dashboard" component={(user || hasError || loadingTimeout) ? Dashboard : Auth} />
+      <Route path="/dashboard/:tool" component={(user || hasError || loadingTimeout) ? Dashboard : Auth} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/admin/dashboard">
