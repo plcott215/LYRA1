@@ -11,3 +11,62 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Custom hover effects */
+  .hover-scale {
+    @apply transition-transform duration-200 ease-out;
+  }
+  .hover-scale:hover {
+    @apply transform scale-105;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-200 ease-out;
+  }
+  .hover-glow:hover {
+    @apply shadow-[0_0_12px_rgba(252,238,9,0.7)];
+  }
+
+  .hover-bright {
+    @apply transition-all duration-200 ease-out;
+  }
+  .hover-bright:hover {
+    @apply brightness-110;
+  }
+
+  .hover-pulse {
+    @apply transition-all duration-200 ease-out;
+  }
+  .hover-pulse:hover {
+    animation: pulse 1s infinite;
+  }
+
+  /* Yellow underline animation */
+  .hover-underline {
+    @apply relative inline-block;
+  }
+  .hover-underline::after {
+    @apply content-[''] absolute left-0 bottom-0 w-0 h-[2px] bg-primary transition-all duration-300 ease-out;
+  }
+  .hover-underline:hover::after {
+    @apply w-full;
+  }
+
+  /* Override any existing accent hover effects */
+  .hover\:bg-accent, .hover\:text-accent-foreground {
+    @apply hover:bg-black/80 hover:text-primary;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

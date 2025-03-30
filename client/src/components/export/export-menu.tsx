@@ -140,7 +140,7 @@ const ExportMenu = ({ contentId, title, content, type }: ExportMenuProps) => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="hover-glow">
             Export
           </Button>
         </DropdownMenuTrigger>
@@ -164,7 +164,7 @@ const ExportMenu = ({ contentId, title, content, type }: ExportMenuProps) => {
                 href="https://www.notion.so/my-integrations" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline block mt-1"
+                className="text-primary hover-underline block mt-1"
               >
                 Create a Notion integration
               </a>
@@ -198,7 +198,7 @@ const ExportMenu = ({ contentId, title, content, type }: ExportMenuProps) => {
                   href="https://developers.notion.com/docs/working-with-page-content#creating-a-page-with-content"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline block mt-1"
+                  className="text-primary hover-underline block mt-1"
                 >
                   Learn how to find your page/database ID
                 </a>
@@ -210,7 +210,11 @@ const ExportMenu = ({ contentId, title, content, type }: ExportMenuProps) => {
             <Button variant="outline" onClick={() => setNotionDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={submitNotionExport} disabled={isExporting}>
+            <Button 
+              onClick={submitNotionExport} 
+              disabled={isExporting}
+              className="hover-glow"
+            >
               {isExporting ? "Exporting..." : "Export"}
             </Button>
           </DialogFooter>

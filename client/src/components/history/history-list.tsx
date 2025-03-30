@@ -77,11 +77,11 @@ const HistoryItem = ({ history }: HistoryItemProps) => {
   const createdAt = history.createdAt ? parseISO(history.createdAt.toString()) : new Date();
 
   return (
-    <Card className="mb-4 hover:shadow-md transition-shadow duration-300">
+    <Card className="mb-4" hoverEffect={true}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg font-medium">{title}</CardTitle>
+            <CardTitle className="text-lg font-medium" highlightOnHover={true}>{title}</CardTitle>
             <CardDescription className="flex items-center gap-1 mt-1">
               <Calendar className="h-3.5 w-3.5 opacity-70" />
               <span>{format(createdAt, "MMM d, yyyy")}</span>
@@ -90,7 +90,7 @@ const HistoryItem = ({ history }: HistoryItemProps) => {
               <span>{format(createdAt, "h:mm a")}</span>
             </CardDescription>
           </div>
-          <Badge variant="outline" className="flex items-center gap-1">
+          <Badge variant="outline" className="flex items-center gap-1 transition-all duration-200 hover:bg-primary/10 hover:border-primary/50">
             {getToolIcon(history.toolType)}
             <span>{getToolLabel(history.toolType)}</span>
           </Badge>
@@ -191,7 +191,7 @@ export function HistoryList() {
         <h1 className="text-2xl font-bold">Generation History</h1>
         <div className="w-40">
           <Select value={filter} onValueChange={(value) => setFilter(value as ToolType)}>
-            <SelectTrigger>
+            <SelectTrigger className="hover-glow">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
