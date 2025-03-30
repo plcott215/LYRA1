@@ -24,7 +24,7 @@ export const SettingsPage = () => {
   const [weeklyReports, setWeeklyReports] = useState(false);
   
   // Appearance settings
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   
   // API settings
   const [signature, setSignature] = useState("");
@@ -43,11 +43,23 @@ export const SettingsPage = () => {
     });
   };
   
-  const handleSaveAppearance = () => {
-    toast({
-      title: "Appearance Settings Updated",
-      description: "Your theme preferences have been saved.",
-    });
+  const handleSaveAppearance = async () => {
+    try {
+      // In a real application, this would update the theme on the server
+      // For demo purposes, we're just showing a toast notification
+      
+      // Simulating a successful update
+      toast({
+        title: "Appearance Settings Updated",
+        description: "Your theme preferences have been saved. Refresh to see changes.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was an error saving your appearance settings.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleSaveAPI = () => {
