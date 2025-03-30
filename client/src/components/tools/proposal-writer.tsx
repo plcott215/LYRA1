@@ -248,11 +248,11 @@ const ProposalWriter = () => {
               <Button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="w-full py-2.5 px-4 bg-primary text-primary-foreground font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)] transition-all duration-200"
+                className="w-full py-2.5 px-4 bg-primary text-black font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)] transition-all duration-200"
               >
                 {loading ? (
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
                     Generating...
                   </div>
                 ) : (
