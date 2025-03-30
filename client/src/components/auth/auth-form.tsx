@@ -6,6 +6,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/firebase";
 
+// Admin credentials - in a real app, this would be stored securely and not in frontend code
+const ADMIN_EMAIL = "admin@lyra.app";
+const ADMIN_PASSWORD = "admin123";
+
 const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -20,6 +24,17 @@ const AuthForm = () => {
     setIsLoading(true);
 
     try {
+      // Check for admin credentials
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        toast({
+          title: "Admin Login Successful",
+          description: "Welcome to the admin dashboard!",
+        });
+        setLocation("/admin/dashboard");
+        return;
+      }
+      
+      // Regular user authentication
       if (isSignUp) {
         await signUpWithEmail(email, password);
         toast({

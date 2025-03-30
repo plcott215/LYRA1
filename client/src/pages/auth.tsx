@@ -18,11 +18,15 @@ const Auth = () => {
     setLocation("/dashboard");
   };
 
+  const handleAdminDemo = () => {
+    setLocation("/admin/dashboard");
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-background">
       <AuthForm />
       
-      <div className="mt-8 text-center">
+      <div className="mt-8 text-center space-y-2">
         <Button
           variant="link"
           onClick={handleDemo}
@@ -30,6 +34,16 @@ const Auth = () => {
         >
           Skip login (demo mode)
         </Button>
+        
+        <div>
+          <Button
+            variant="link"
+            onClick={handleAdminDemo}
+            className="text-muted-foreground hover:text-primary transition-colors text-sm"
+          >
+            Admin demo (admin@lyra.app / admin123)
+          </Button>
+        </div>
       </div>
     </div>
   );
