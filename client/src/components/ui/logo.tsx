@@ -24,7 +24,7 @@ export function Logo({ size = "md", withText = true, className }: LogoProps) {
       <div className={cn(sizeClasses[size])}>
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g>
-            {/* Simple modern circle with gap */}
+            {/* Complete circle with no gap */}
             <circle 
               cx="50" 
               cy="50" 
@@ -32,9 +32,6 @@ export function Logo({ size = "md", withText = true, className }: LogoProps) {
               stroke="currentColor" 
               className="text-primary" 
               strokeWidth="6"
-              strokeDasharray="280"
-              strokeDashoffset="70"
-              transform="rotate(-90, 50, 50)"
             />
           </g>
         </svg>
