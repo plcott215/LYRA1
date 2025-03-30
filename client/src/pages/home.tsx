@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
+import Logo from "@/components/ui/logo";
 
 const Home = () => {
   const [_, navigate] = useLocation();
@@ -56,10 +57,8 @@ const Home = () => {
       {/* Navbar */}
       <header className="border-b border-border sticky top-0 bg-background/95 backdrop-blur z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold">
-              <span className="text-primary">Lyra</span>
-            </h1>
+          <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
+            <Logo size="md" />
           </div>
           <div className="flex items-center space-x-4">
             {user ? (
@@ -237,9 +236,9 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-8 md:mb-0">
-              <h2 className="text-xl font-bold mb-4">
-                <span className="text-primary">Lyra</span>
-              </h2>
+              <div className="mb-4">
+                <Logo size="sm" />
+              </div>
               <p className="text-muted-foreground max-w-xs">
                 AI-powered tools designed specifically for freelancers to streamline their workflow.
               </p>

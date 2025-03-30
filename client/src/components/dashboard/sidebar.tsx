@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/context/subscription-context";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/ui/logo";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -81,11 +82,11 @@ const Sidebar = () => {
       <div className="h-16 flex items-center justify-center md:justify-start px-4 border-b border-border">
         <Link href="/dashboard">
           <div className="cursor-pointer">
-            <span className="hidden md:block text-xl font-bold tracking-tight">
-              <span className="text-primary">Lyra</span>
+            <span className="hidden md:block">
+              <Logo size="sm" />
             </span>
-            <span className="block md:hidden text-xl font-bold tracking-tight">
-              <span className="text-primary">L</span>
+            <span className="block md:hidden">
+              <Logo size="sm" withText={false} />
             </span>
           </div>
         </Link>
