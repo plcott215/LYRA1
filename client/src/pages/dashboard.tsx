@@ -6,6 +6,7 @@ import EmailRewriter from "@/components/tools/email-rewriter";
 import PricingAssistant from "@/components/tools/pricing-assistant";
 import ContractExplainer from "@/components/tools/contract-explainer";
 import VoiceToBrief from "@/components/tools/voice-to-brief";
+import { HistoryPage } from "@/components/history/history-page";
 
 const Dashboard = () => {
   const [location] = useLocation();
@@ -30,12 +31,7 @@ const Dashboard = () => {
       case "voice":
         return <VoiceToBrief />;
       case "history":
-        return (
-          <div className="text-center py-20">
-            <h2 className="text-2xl font-bold mb-4">History</h2>
-            <p className="text-muted-foreground">Your generation history will appear here.</p>
-          </div>
-        );
+        return <HistoryPage />;
       case "settings":
         return (
           <div className="text-center py-20">

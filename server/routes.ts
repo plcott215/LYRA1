@@ -532,7 +532,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Tool history endpoint
-  app.get('/api/history', async (req: Request, res: Response) => {
+  app.get('/api/history', validateFirebaseToken, async (req: Request, res: Response) => {
     try {
       const userId = req.body.user.id;
       const toolType = req.query.tool as string | undefined;
@@ -546,7 +546,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Record export action
-  app.post('/api/history', async (req: Request, res: Response) => {
+  app.post('/api/history', validateFirebaseToken, async (req: Request, res: Response) => {
     try {
       const userId = req.body.user.id;
       const { toolType, action, format, content } = req.body;

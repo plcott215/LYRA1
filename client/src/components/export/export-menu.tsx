@@ -220,4 +220,4 @@ const ExportMenu = ({ contentId, title, content, type }: ExportMenuProps) => {
   );
 };
 
-export default ExportMenu;
+export { ExportMenu };
