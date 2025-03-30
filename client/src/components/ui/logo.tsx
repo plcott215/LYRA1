@@ -24,10 +24,7 @@ export function Logo({ size = "md", withText = true, className }: LogoProps) {
       <div className={cn(sizeClasses[size])}>
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g>
-            {/* Dark inner circle to create black center */}
-            <circle cx="50" cy="50" r="45" fill="black" />
-            
-            {/* Main eclipse ring */}
+            {/* Simple modern circle with gap */}
             <circle 
               cx="50" 
               cy="50" 
@@ -35,22 +32,9 @@ export function Logo({ size = "md", withText = true, className }: LogoProps) {
               stroke="currentColor" 
               className="text-primary" 
               strokeWidth="6"
-              strokeDasharray="251"
-              strokeDashoffset="30"
-              transform="rotate(130, 50, 50)"
-            />
-            
-            {/* Subtle glow for depth */}
-            <circle 
-              cx="50" 
-              cy="50" 
-              r="42" 
-              stroke="currentColor" 
-              className="text-primary opacity-20" 
-              strokeWidth="1"
-              strokeDasharray="255"
-              strokeDashoffset="25"
-              transform="rotate(130, 50, 50)"
+              strokeDasharray="280"
+              strokeDashoffset="70"
+              transform="rotate(-90, 50, 50)"
             />
           </g>
         </svg>
