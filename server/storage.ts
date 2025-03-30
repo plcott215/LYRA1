@@ -30,6 +30,33 @@ export class MemStorage implements IStorage {
   private currentUserId: number;
   private currentToolHistoryId: number;
   private currentSubscriptionId: number;
+  
+  // Default values for nullable fields
+  private defaultUser: Partial<User> = {
+    password: null,
+    authProvider: null,
+    providerId: null,
+    displayName: null,
+    photoURL: null,
+    stripeCustomerId: null,
+    stripeSubscriptionId: null,
+    trialEndsAt: null,
+    createdAt: null
+  };
+  
+  private defaultToolHistory: Partial<ToolHistory> = {
+    action: "generate",
+    format: null,
+    generationTime: null,
+    metadata: null,
+    createdAt: null
+  };
+  
+  private defaultSubscription: Partial<Subscription> = {
+    trialEndDate: null,
+    cancelAtPeriodEnd: false,
+    createdAt: null
+  };
 
   constructor() {
     this.users = new Map();
@@ -70,6 +97,7 @@ export class MemStorage implements IStorage {
     const trialEndsAt = addDays(now, 3);
     
     const user: User = { 
+      ...this.defaultUser,
       ...insertUser, 
       id, 
       createdAt: now,
@@ -103,6 +131,7 @@ export class MemStorage implements IStorage {
     const now = new Date();
     
     const subscription: Subscription = { 
+      ...this.defaultSubscription,
       ...insertSubscription, 
       id, 
       createdAt: now 
@@ -153,15 +182,18 @@ export class MemStorage implements IStorage {
   }
 
   // Tool history operations
-  async getToolHistory(userId: number, toolType?: string): Promise<ToolHistory[]> {
+  async getToolHistory(userId: number, toolType?: string, action?: string): Promise<ToolHistory[]> {
     return Array.from(this.toolHistory.values())
       .filter((history) => {
         if (history.userId !== userId) return false;
         if (toolType && history.toolType !== toolType) return false;
+        if (action && history.action !== action) return false;
         return true;
       })
       .sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        const dateA = a.createdAt instanceof Date ? a.createdAt : new Date();
+        const dateB = b.createdAt instanceof Date ? b.createdAt : new Date();
+        return dateB.getTime() - dateA.getTime();
       });
   }
 
@@ -170,6 +202,7 @@ export class MemStorage implements IStorage {
     const now = new Date();
     
     const history: ToolHistory = { 
+      ...this.defaultToolHistory,
       ...insertHistory, 
       id, 
       createdAt: now 

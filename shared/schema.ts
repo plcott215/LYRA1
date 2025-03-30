@@ -14,7 +14,7 @@ export const users = pgTable("users", {
   photoURL: text("photo_url"),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
-  trialEndsAt: timestamp("trial_ends_at").defaultNow(),
+  trialEndsAt: timestamp("trial_ends_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -23,9 +23,12 @@ export const toolHistory = pgTable("tool_history", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
   toolType: text("tool_type").notNull(), // proposal, email, pricing, contract, brief
+  action: text("action").default("generate"), // generate, export
+  format: text("format"), // PDF, Notion (for exports)
   input: text("input").notNull(),
   output: text("output").notNull(),
   generationTime: integer("generation_time"),
+  metadata: text("metadata"), // JSON string for additional data
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -59,9 +62,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertToolHistorySchema = createInsertSchema(toolHistory).pick({
   userId: true,
   toolType: true,
+  action: true,
+  format: true,
   input: true,
   output: true,
   generationTime: true,
+  metadata: true,
 });
 
 export const insertSubscriptionSchema = createInsertSchema(subscriptions).pick({

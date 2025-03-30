@@ -13,7 +13,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 
 // Initialize Stripe client
 const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
 // Middleware to ensure OpenAI API key is provided
@@ -82,7 +82,12 @@ const checkProSubscription = async (userId: number) => {
 
   // Check if user is still in trial period
   if (user.trialEndsAt) {
-    const daysLeft = differenceInDays(new Date(user.trialEndsAt), new Date());
+    // Make sure we have a valid Date object
+    const trialDate = user.trialEndsAt instanceof Date ? 
+      user.trialEndsAt : 
+      new Date(user.trialEndsAt);
+      
+    const daysLeft = differenceInDays(trialDate, new Date());
     return daysLeft >= 0;
   }
 
@@ -94,7 +99,12 @@ const getRemainingTrialDays = async (userId: number) => {
   const user = await storage.getUser(userId);
   if (!user || !user.trialEndsAt) return 0;
   
-  const daysLeft = differenceInDays(new Date(user.trialEndsAt), new Date());
+  // Make sure we have a valid Date object
+  const trialDate = user.trialEndsAt instanceof Date ? 
+    user.trialEndsAt : 
+    new Date(user.trialEndsAt);
+    
+  const daysLeft = differenceInDays(trialDate, new Date());
   return Math.max(0, daysLeft);
 };
 
@@ -526,9 +536,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.body.user.id;
       const toolType = req.query.tool as string | undefined;
+      const action = req.query.action as string | undefined;
       
       const history = await storage.getToolHistory(userId, toolType);
       res.json({ history });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
+  // Record export action
+  app.post('/api/history', async (req: Request, res: Response) => {
+    try {
+      const userId = req.body.user.id;
+      const { toolType, action, format, content } = req.body;
+      
+      if (!toolType || !action || !format) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+      
+      // Validate tool history data
+      const historySchema = insertToolHistorySchema.extend({
+        action: z.enum(["generate", "export"]),
+        format: z.enum(["PDF", "Notion"]),
+        metadata: z.string().optional()
+      });
+      
+      // Create tool history record
+      const historyData = await historySchema.parseAsync({
+        userId,
+        toolType,
+        action,
+        format,
+        input: JSON.stringify(content || {}),
+        output: "",  // No output for export actions
+        generationTime: 0,
+        metadata: content.pageUrl ? JSON.stringify({ pageUrl: content.pageUrl }) : undefined
+      });
+      
+      const history = await storage.createToolHistory(historyData);
+      res.json({ success: true, historyId: history.id });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
