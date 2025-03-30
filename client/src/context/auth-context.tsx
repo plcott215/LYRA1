@@ -23,12 +23,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChange((user) => {
-      setUser(user);
+    try {
+      console.log("Initializing auth state...");
+      const unsubscribe = onAuthStateChange((user) => {
+        console.log("Auth state changed:", user ? "Logged in" : "Not logged in");
+        setUser(user);
+        setLoading(false);
+      });
+      
+      // Ensure loading state is set to false after a timeout
+      // This prevents infinite loading if Firebase has issues
+      const timeout = setTimeout(() => {
+        if (loading) {
+          console.log("Auth timeout - forcing loading to false");
+          setLoading(false);
+        }
+      }, 3000);
+      
+      return () => {
+        unsubscribe();
+        clearTimeout(timeout);
+      };
+    } catch (error) {
+      console.error("Auth initialization error:", error);
       setLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, []);
 
   return (
