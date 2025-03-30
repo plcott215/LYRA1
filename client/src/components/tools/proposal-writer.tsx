@@ -7,6 +7,15 @@ import { useToast } from "@/hooks/use-toast";
 import { generateProposal, ProposalRequest } from "@/lib/openai";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMarkdown } from "@/lib/utils";
+import { exportToPDF } from "@/lib/export";
+import { 
+  Copy as CopyIcon, 
+  Download as DownloadIcon, 
+  RefreshCcw as RefreshIcon,
+  FileText as FileTextIcon,
+  FileUp as FileUpIcon, 
+  Share2 as ShareIcon
+} from "lucide-react";
 
 const tones = [
   { value: "professional", label: "Professional" },
@@ -100,6 +109,52 @@ const ProposalWriter = () => {
       toast({
         title: "Copied to clipboard!",
         description: "Your proposal has been copied to your clipboard",
+      });
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (!proposal) return;
+    
+    try {
+      const contentId = `proposal-content-${Date.now()}`;
+      const success = await exportToPDF(contentId, `lyra-proposal-${Date.now()}`);
+      
+      if (success) {
+        toast({
+          title: "Export Successful",
+          description: "Your proposal has been exported to PDF",
+        });
+        
+        // Record export in history
+        try {
+          await fetch('/api/history', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              toolType: 'proposal',
+              action: 'export',
+              format: 'PDF',
+              content: { title: formData.title, content: proposal }
+            }),
+          });
+        } catch (err) {
+          console.error('Failed to record export in history:', err);
+        }
+      } else {
+        toast({
+          title: "Export Failed",
+          description: "There was an error exporting to PDF",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Export Failed",
+        description: error.message || "There was an error exporting to PDF",
+        variant: "destructive",
       });
     }
   };
@@ -279,16 +334,19 @@ const ProposalWriter = () => {
                   size="icon"
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
+                  title="Copy to clipboard"
                 >
-                  <i className="ri-file-copy-line text-sm"></i>
+                  <CopyIcon className="h-4 w-4" />
                 </Button>
                 <Button
+                  onClick={handleExportPDF}
                   disabled={!proposal}
                   size="icon"
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
+                  title="Download as PDF"
                 >
-                  <i className="ri-download-line text-sm"></i>
+                  <FileTextIcon className="h-4 w-4" />
                 </Button>
                 <Button
                   onClick={handleRegenerate}
@@ -296,8 +354,9 @@ const ProposalWriter = () => {
                   size="icon"
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
+                  title="Regenerate proposal"
                 >
-                  <i className="ri-refresh-line text-sm"></i>
+                  <RefreshIcon className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -357,7 +416,7 @@ const ProposalWriter = () => {
                   disabled={loading}
                   className="py-1.5 px-3 bg-accent text-black text-sm font-medium rounded-lg hover:shadow-[0_0_10px_rgba(0,255,157,0.5)] transition-all duration-200"
                 >
-                  <i className="ri-magic-line mr-1"></i>
+                  <RefreshIcon className="h-4 w-4 mr-1" />
                   Regenerate
                 </Button>
               )}
