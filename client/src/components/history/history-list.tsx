@@ -22,6 +22,7 @@ import { ExportMenu } from "@/components/export/export-menu";
 import { Calendar, Clock, FileText, Mail, DollarSign, FileCheck, Mic } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { format, parseISO } from "date-fns";
+import HistoryDetail from "./history-detail";
 
 type ToolType = "proposal" | "email" | "pricing" | "contract" | "brief" | "all";
 
@@ -30,6 +31,8 @@ interface HistoryItemProps {
 }
 
 const HistoryItem = ({ history }: HistoryItemProps) => {
+  const [detailOpen, setDetailOpen] = useState(false);
+  
   const getToolIcon = (type: string) => {
     switch (type) {
       case "proposal":
@@ -76,46 +79,69 @@ const HistoryItem = ({ history }: HistoryItemProps) => {
   // Parse dates safely
   const createdAt = history.createdAt ? parseISO(history.createdAt.toString()) : new Date();
 
+  const handleOpenDetail = () => {
+    setDetailOpen(true);
+  };
+
+  const handleCloseDetail = () => {
+    setDetailOpen(false);
+  };
+
   return (
-    <Card className="mb-4" hoverEffect={true}>
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-lg font-medium" highlightOnHover={true}>{title}</CardTitle>
-            <CardDescription className="flex items-center gap-1 mt-1">
-              <Calendar className="h-3.5 w-3.5 opacity-70" />
-              <span>{format(createdAt, "MMM d, yyyy")}</span>
-              <span className="mx-1">•</span>
-              <Clock className="h-3.5 w-3.5 opacity-70" />
-              <span>{format(createdAt, "h:mm a")}</span>
-            </CardDescription>
+    <>
+      <Card 
+        className="mb-4 cursor-pointer" 
+        hoverEffect={true} 
+        onClick={handleOpenDetail}
+      >
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-lg font-medium" highlightOnHover={true}>{title}</CardTitle>
+              <CardDescription className="flex items-center gap-1 mt-1">
+                <Calendar className="h-3.5 w-3.5 opacity-70" />
+                <span>{format(createdAt, "MMM d, yyyy")}</span>
+                <span className="mx-1">•</span>
+                <Clock className="h-3.5 w-3.5 opacity-70" />
+                <span>{format(createdAt, "h:mm a")}</span>
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="flex items-center gap-1 transition-all duration-200 hover:bg-primary/10 hover:border-primary/50">
+              {getToolIcon(history.toolType)}
+              <span>{getToolLabel(history.toolType)}</span>
+            </Badge>
           </div>
-          <Badge variant="outline" className="flex items-center gap-1 transition-all duration-200 hover:bg-primary/10 hover:border-primary/50">
-            {getToolIcon(history.toolType)}
-            <span>{getToolLabel(history.toolType)}</span>
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-sm text-muted-foreground">
-          <div className="font-semibold mb-1">Input:</div>
-          <p className="whitespace-pre-wrap">{inputPreview}</p>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between pt-2">
-        <div className="text-xs text-muted-foreground">
-          {history.generationTime 
-            ? `Generated in ${(history.generationTime / 1000).toFixed(1)}s` 
-            : ""}
-        </div>
-        <ExportMenu 
-          contentId={history.id.toString()} 
-          title={title}
-          content={history.output}
-          type={history.toolType}
-        />
-      </CardFooter>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm text-muted-foreground">
+            <div className="font-semibold mb-1">Input:</div>
+            <p className="whitespace-pre-wrap">{inputPreview}</p>
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between pt-2">
+          <div className="text-xs text-muted-foreground">
+            {history.generationTime 
+              ? `Generated in ${(history.generationTime / 1000).toFixed(1)}s` 
+              : ""}
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ExportMenu 
+              contentId={history.id.toString()} 
+              title={title}
+              content={history.output}
+              type={history.toolType}
+            />
+          </div>
+        </CardFooter>
+      </Card>
+
+      {/* Detail view dialog */}
+      <HistoryDetail 
+        history={history} 
+        open={detailOpen} 
+        onClose={handleCloseDetail} 
+      />
+    </>
   );
 };
 

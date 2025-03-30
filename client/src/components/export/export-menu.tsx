@@ -20,6 +20,7 @@ import { exportToPDF, exportToNotion } from "@/lib/export";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useSubscription } from "@/context/subscription-context";
+import { formatMarkdown } from "@/lib/utils";
 
 interface ExportMenuProps {
   contentId: string;

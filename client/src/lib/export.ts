@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { Client } from "@notionhq/client";
+import { formatMarkdown } from "./utils";
 
 // PDF Export functionality
 export const exportToPDF = async (
@@ -65,55 +66,91 @@ export const exportToNotion = async ({
   try {
     const notion = new Client({ auth: notionToken });
     
+    // Create a simpler Notion block structure
+    const blocks = [
+      {
+        object: "block",
+        type: "heading_1",
+        heading_1: {
+          rich_text: [{ type: "text", text: { content: title } }]
+        }
+      },
+      {
+        object: "block",
+        type: "paragraph",
+        paragraph: {
+          rich_text: [{ type: "text", text: { content: `Type: ${type}` } }]
+        }
+      },
+      {
+        object: "block",
+        type: "paragraph",
+        paragraph: {
+          rich_text: [{ type: "text", text: { content: content } }]
+        }
+      }
+    ];
+    
     // If we have a database ID, create a page in that database
-    if (databaseId) {
-      const response = await notion.pages.create({
-        parent: { database_id: databaseId },
-        properties: {
-          Name: {
-            title: [
-              {
-                text: {
-                  content: title
-                }
-              }
-            ]
-          },
-          Type: {
-            select: {
-              name: type
-            }
-          }
-        },
-        children: [
-          {
-            object: "block",
-            type: "paragraph",
-            paragraph: {
-              rich_text: [
+    if (databaseId && databaseId.length > 0 && databaseId.indexOf('-') !== -1) {
+      // This looks like a database ID
+      try {
+        const response = await notion.pages.create({
+          parent: { database_id: databaseId },
+          properties: {
+            Name: {
+              title: [
                 {
-                  type: "text",
                   text: {
-                    content
+                    content: title
+                  }
+                }
+              ]
+            },
+            Type: {
+              select: {
+                name: type
+              }
+            }
+          },
+          children: blocks
+        });
+        
+        return {
+          success: true,
+          message: "Successfully exported to Notion database",
+          pageUrl: `https://notion.so/${response.id.replace(/-/g, '')}`
+        };
+      } catch (dbError) {
+        // If database creation fails, try as a page ID
+        console.error("Failed to create in database, trying as page:", dbError);
+        
+        const response = await notion.pages.create({
+          parent: { page_id: databaseId },
+          properties: {
+            title: {
+              title: [
+                {
+                  text: {
+                    content: title
                   }
                 }
               ]
             }
-          }
-        ]
-      });
-      
-      return {
-        success: true,
-        message: "Successfully exported to Notion database",
-        pageUrl: `https://notion.so/${response.id.replace(/-/g, '')}`
-      };
+          },
+          children: blocks
+        });
+        
+        return {
+          success: true,
+          message: "Successfully exported to Notion",
+          pageUrl: `https://notion.so/${response.id.replace(/-/g, '')}`
+        };
+      }
     } 
     // Otherwise, create a standalone page
     else {
-      // Instead of creating a page in workspace (which needs special permissions)
-      // We'll add a page to a user-specific page. If no database ID is provided,
-      // we'll ask the user to provide at least one page ID
+      // This is a page ID or not provided
       if (!databaseId) {
         return {
           success: false,
@@ -136,50 +173,7 @@ export const exportToNotion = async ({
             ]
           }
         },
-        children: [
-          {
-            object: "block",
-            type: "heading_1",
-            heading_1: {
-              rich_text: [
-                {
-                  type: "text",
-                  text: {
-                    content: title
-                  }
-                }
-              ]
-            }
-          },
-          {
-            object: "block",
-            type: "paragraph",
-            paragraph: {
-              rich_text: [
-                {
-                  type: "text",
-                  text: {
-                    content: `Type: ${type}`
-                  }
-                }
-              ]
-            }
-          },
-          {
-            object: "block",
-            type: "paragraph",
-            paragraph: {
-              rich_text: [
-                {
-                  type: "text",
-                  text: {
-                    content
-                  }
-                }
-              ]
-            }
-          }
-        ]
+        children: blocks
       });
       
       return {

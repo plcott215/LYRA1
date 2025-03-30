@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { generateBriefFromVoice, VoiceToBriefRequest } from "@/lib/openai";
+import { formatMarkdown } from "@/lib/utils";
 
 const VoiceToBrief = () => {
   const [text, setText] = useState("");
@@ -180,7 +181,7 @@ const VoiceToBrief = () => {
             {!loading && (
               <div className="bg-background rounded-lg p-5 h-[calc(100%-4rem)] overflow-y-auto">
                 {brief ? (
-                  <div className="brief-content" dangerouslySetInnerHTML={{ __html: brief.replace(/\n/g, '<br/>') }}></div>
+                  <div className="brief-content" dangerouslySetInnerHTML={{ __html: formatMarkdown(brief) }}></div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-4 text-muted-foreground">

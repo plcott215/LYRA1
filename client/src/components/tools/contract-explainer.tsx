@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { explainContract, ContractExplainRequest } from "@/lib/openai";
 import { Input } from "@/components/ui/input";
+import { formatMarkdown } from "@/lib/utils";
 
 const ContractExplainer = () => {
   const [formData, setFormData] = useState<ContractExplainRequest>({
@@ -242,7 +243,7 @@ const ContractExplainer = () => {
             {!loading && (
               <div className="bg-background rounded-lg p-5 h-[calc(100%-4rem)] overflow-y-auto">
                 {contractExplanation ? (
-                  <div className="contract-explanation" dangerouslySetInnerHTML={{ __html: contractExplanation.replace(/\n/g, '<br/>') }}></div>
+                  <div className="contract-explanation" dangerouslySetInnerHTML={{ __html: formatMarkdown(contractExplanation) }}></div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-4 text-muted-foreground">

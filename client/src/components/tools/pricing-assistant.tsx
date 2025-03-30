@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getPricingEstimate, PricingRequest } from "@/lib/openai";
+import { formatMarkdown } from "@/lib/utils";
 
 const PricingAssistant = () => {
   const [formData, setFormData] = useState<PricingRequest>({
@@ -241,7 +242,7 @@ const PricingAssistant = () => {
             {!loading && (
               <div className="bg-background rounded-lg p-5 h-[calc(100%-4rem)] overflow-y-auto">
                 {pricingEstimate ? (
-                  <div className="pricing-content" dangerouslySetInnerHTML={{ __html: pricingEstimate.replace(/\n/g, '<br/>') }}></div>
+                  <div className="pricing-content" dangerouslySetInnerHTML={{ __html: formatMarkdown(pricingEstimate) }}></div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-4 text-muted-foreground">
