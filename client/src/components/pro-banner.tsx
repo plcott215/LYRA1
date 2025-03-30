@@ -18,7 +18,7 @@ const ProBanner = () => {
         
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/subscribe">
-            <Button className="py-2 px-4 bg-primary text-primary-foreground font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)] transition-all duration-200">
+            <Button className="py-2 px-4 bg-primary text-black font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)] transition-all duration-200">
               Upgrade to Pro - $19/month
             </Button>
           </Link>

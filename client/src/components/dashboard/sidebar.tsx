@@ -139,7 +139,7 @@ const Sidebar = () => {
             <p className="text-muted-foreground text-xs mb-3">{trialDaysLeft} days remaining</p>
             <Link href="/subscribe">
               <Button
-                className="w-full py-1.5 px-3 bg-primary text-primary-foreground text-sm font-medium hover-glow"
+                className="w-full py-1.5 px-3 bg-primary text-black text-sm font-medium hover-glow"
                 size="sm"
               >
                 Upgrade to Pro

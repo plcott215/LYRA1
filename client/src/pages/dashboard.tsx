@@ -7,6 +7,7 @@ import PricingAssistant from "@/components/tools/pricing-assistant";
 import ContractExplainer from "@/components/tools/contract-explainer";
 import VoiceToBrief from "@/components/tools/voice-to-brief";
 import { HistoryPage } from "@/components/history/history-page";
+import { SettingsPage } from "@/components/settings/settings-page";
 
 const Dashboard = () => {
   const [location] = useLocation();
@@ -33,12 +34,7 @@ const Dashboard = () => {
       case "history":
         return <HistoryPage />;
       case "settings":
-        return (
-          <div className="text-center py-20">
-            <h2 className="text-2xl font-bold mb-4">Settings</h2>
-            <p className="text-muted-foreground">Account settings and preferences will appear here.</p>
-          </div>
-        );
+        return <SettingsPage />;
       default:
         return <ProposalWriter />;
     }
