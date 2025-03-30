@@ -1,8 +1,10 @@
 import { Switch, Route } from "wouter";
 import { useAuth } from "./context/auth-context";
 import Auth from "@/pages/auth";
+import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import Subscribe from "@/pages/subscribe";
+import Pricing from "@/pages/pricing";
 import NotFound from "@/pages/not-found";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -62,10 +64,11 @@ function App() {
   // This will let users access the app even if authentication fails
   return (
     <Switch>
-      <Route path="/" component={(user || hasError || loadingTimeout) ? Dashboard : Auth} />
+      <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
-      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/dashboard" component={(user || hasError || loadingTimeout) ? Dashboard : Auth} />
       <Route path="/subscribe" component={Subscribe} />
+      <Route path="/pricing" component={Pricing} />
       <Route component={NotFound} />
     </Switch>
   );
