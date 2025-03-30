@@ -73,14 +73,31 @@ const VoiceToBrief = () => {
               <span className="w-2 h-2 rounded-full bg-primary mr-1"></span>
               AI Powered
             </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent bg-opacity-20 text-accent">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent bg-opacity-20 text-accent mr-2">
               Pro Feature
+            </span>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-white animate-pulse">
+              Coming Soon
             </span>
           </div>
         </CardContent>
       </Card>
+      
+      {/* Coming Soon Banner */}
+      <div className="relative mb-8 rounded-lg overflow-hidden">
+        <div className="bg-card rounded-lg border-2 border-yellow-600 p-8 text-center">
+          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-600 text-white mb-4 animate-pulse">
+            Coming Soon
+          </div>
+          <h3 className="text-xl font-bold mb-2">Voice-to-Brief Feature</h3>
+          <p className="text-muted-foreground mb-4">
+            We're working hard to bring you voice transcription and automatic brief generation.
+            This feature will be available in our next update.
+          </p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-50 pointer-events-none">
         {/* Input Section */}
         <Card className="bg-card rounded-xl p-5 shadow-[0_0_10px_rgba(252,238,9,0.2)]">
           <CardContent className="p-0">
