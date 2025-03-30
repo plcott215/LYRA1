@@ -14,9 +14,9 @@ interface SidebarItemProps {
 const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
   return (
     <Link href={path}>
-      <a
+      <div
         className={cn(
-          "flex items-center py-2 px-3 rounded-lg mb-1 transition-all duration-300",
+          "flex items-center py-2 px-3 rounded-lg mb-1 transition-all duration-300 cursor-pointer",
           isActive
             ? "bg-primary bg-opacity-15 border-l-2 border-primary"
             : "hover:bg-muted"
@@ -28,7 +28,7 @@ const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
         <span className={cn("ml-3 hidden md:block", isActive ? "font-medium" : "")}>
           {label}
         </span>
-      </a>
+      </div>
     </Link>
   );
 };
@@ -80,14 +80,14 @@ const Sidebar = () => {
       {/* Logo */}
       <div className="h-16 flex items-center justify-center md:justify-start px-4 border-b border-border">
         <Link href="/dashboard">
-          <a className="block">
+          <div className="cursor-pointer">
             <span className="hidden md:block text-xl font-bold tracking-tight">
               <span className="text-primary">Lyra</span>
             </span>
             <span className="block md:hidden text-xl font-bold tracking-tight">
               <span className="text-primary">L</span>
             </span>
-          </a>
+          </div>
         </Link>
       </div>
 
