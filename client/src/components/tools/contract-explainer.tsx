@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import { 
+  CopyIcon, 
+  RefreshCwIcon,
+  Sparkles,
+  FileText, 
+  Share2,
+  Download
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -99,11 +107,11 @@ const ContractExplainer = () => {
           </div>
 
           <div>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary bg-opacity-20 text-primary mr-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary mr-2">
               <span className="w-2 h-2 rounded-full bg-primary mr-1"></span>
               AI Powered
             </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent bg-opacity-20 text-accent">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-accent">
               Pro Feature
             </span>
           </div>
@@ -206,7 +214,7 @@ const ContractExplainer = () => {
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
                 >
-                  <i className="ri-file-copy-line text-sm"></i>
+                  <CopyIcon className="h-4 w-4" />
                 </Button>
                 <Button
                   onClick={handleRegenerate}
@@ -215,7 +223,7 @@ const ContractExplainer = () => {
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
                 >
-                  <i className="ri-refresh-line text-sm"></i>
+                  <RefreshCwIcon className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -274,7 +282,7 @@ const ContractExplainer = () => {
                   disabled={loading}
                   className="py-1.5 px-3 bg-accent text-black text-sm font-medium rounded-lg hover:shadow-[0_0_10px_rgba(0,255,157,0.5)] transition-all duration-200"
                 >
-                  <i className="ri-magic-line mr-1"></i>
+                  <Sparkles className="h-4 w-4 mr-1" />
                   Regenerate
                 </Button>
               )}
