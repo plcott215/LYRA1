@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { generateBriefFromVoice, VoiceToBriefRequest } from "@/lib/openai";
 import { formatMarkdown } from "@/lib/utils";
+import { Copy as CopyIcon, RefreshCw as RefreshIcon, Sparkles, Mic as MicIcon } from "lucide-react";
 
 const VoiceToBrief = () => {
   const [text, setText] = useState("");
@@ -69,11 +70,11 @@ const VoiceToBrief = () => {
           </div>
 
           <div>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary bg-opacity-20 text-primary mr-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary mr-2">
               <span className="w-2 h-2 rounded-full bg-primary mr-1"></span>
               AI Powered
             </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent bg-opacity-20 text-accent mr-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-accent mr-2">
               Pro Feature
             </span>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-white animate-pulse">
@@ -160,8 +161,9 @@ const VoiceToBrief = () => {
                   size="icon"
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
+                  title="Copy to clipboard"
                 >
-                  <i className="ri-file-copy-line text-sm"></i>
+                  <CopyIcon className="h-4 w-4" />
                 </Button>
                 <Button
                   onClick={handleRegenerate}
@@ -169,8 +171,9 @@ const VoiceToBrief = () => {
                   size="icon"
                   variant="outline"
                   className="p-1.5 bg-background border-border hover:border-accent transition-colors"
+                  title="Regenerate brief"
                 >
-                  <i className="ri-refresh-line text-sm"></i>
+                  <RefreshIcon className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -225,7 +228,7 @@ const VoiceToBrief = () => {
                   disabled={loading}
                   className="py-1.5 px-3 bg-accent text-black text-sm font-medium rounded-lg hover:shadow-[0_0_10px_rgba(0,255,157,0.5)] transition-all duration-200"
                 >
-                  <i className="ri-magic-line mr-1"></i>
+                  <Sparkles className="h-4 w-4 mr-1" />
                   Regenerate
                 </Button>
               )}
