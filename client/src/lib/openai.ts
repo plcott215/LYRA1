@@ -41,6 +41,16 @@ export interface VoiceToBriefRequest {
   text: string;
 }
 
+export interface ClientOnboardingRequest {
+  clientName: string;
+  businessType: string;
+  projectType: string;
+  timeline: string;
+  budget: string;
+  tone: 'professional' | 'friendly' | 'detailed';
+  additionalInfo?: string;
+}
+
 // API client functions
 export const generateProposal = async (data: ProposalRequest): Promise<OpenAIResponse> => {
   const response = await apiRequest('POST', '/api/tools/proposal', data);
@@ -64,5 +74,10 @@ export const explainContract = async (data: ContractExplainRequest): Promise<Ope
 
 export const generateBriefFromVoice = async (data: VoiceToBriefRequest): Promise<OpenAIResponse> => {
   const response = await apiRequest('POST', '/api/tools/brief', data);
+  return response.json();
+};
+
+export const generateClientOnboarding = async (data: ClientOnboardingRequest): Promise<OpenAIResponse> => {
+  const response = await apiRequest('POST', '/api/tools/onboarding', data);
   return response.json();
 };

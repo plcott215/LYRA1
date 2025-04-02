@@ -34,6 +34,11 @@ const Home = () => {
       icon: "🎤",
       title: "Voice-to-Brief",
       description: "Turn voice recordings or notes into professional project briefs."
+    },
+    {
+      icon: "👥",
+      title: "Client Onboarding",
+      description: "Create professional client onboarding documents that streamline your process."
     }
   ];
 
@@ -134,7 +139,7 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">
-              Five Essential <span className="text-primary">AI Tools</span> for Freelancers
+              Essential <span className="text-primary">AI Tools</span> for Freelancers
             </h2>
             <p className="text-muted-foreground text-lg">
               Streamline your workflow and elevate your freelance business with our specialized AI assistants.

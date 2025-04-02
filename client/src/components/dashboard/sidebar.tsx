@@ -65,6 +65,11 @@ const Sidebar = () => {
       path: "/dashboard/voice",
     },
     {
+      icon: <i className="ri-user-add-line" />,
+      label: "Client Onboarding",
+      path: "/dashboard/onboarding",
+    },
+    {
       icon: <i className="ri-history-line" />,
       label: "History",
       path: "/dashboard/history",
@@ -99,7 +104,7 @@ const Sidebar = () => {
             Tools
           </p>
 
-          {sidebarItems.slice(0, 5).map((item) => (
+          {sidebarItems.slice(0, 6).map((item) => (
             <SidebarItem
               key={item.path}
               icon={item.icon}
@@ -118,7 +123,7 @@ const Sidebar = () => {
             Account
           </p>
 
-          {sidebarItems.slice(5).map((item) => (
+          {sidebarItems.slice(6).map((item) => (
             <SidebarItem
               key={item.path}
               icon={item.icon}

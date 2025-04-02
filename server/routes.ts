@@ -428,6 +428,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Client Onboarding endpoint
+  app.post('/api/tools/onboarding', ensureOpenAIKey, async (req: Request, res: Response) => {
+    try {
+      const startTime = Date.now();
+      const userId = req.body.user.id;
+      const { clientName, businessType, projectType, timeline, budget, tone, additionalInfo } = req.body;
+      
+      // Check inputs
+      if (!clientName || !projectType || !businessType) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Create the prompt
+      const prompt = `
+        Generate a professional client onboarding document with the following details:
+        
+        Client/Company Name: ${clientName}
+        Business Type: ${businessType}
+        Project Type: ${projectType}
+        ${timeline ? `Project Timeline: ${timeline}` : ''}
+        ${budget ? `Budget Range: ${budget}` : ''}
+        ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
+        
+        Tone: ${tone || 'professional'}
+        
+        Create a structured onboarding document that includes:
+        1. Welcome message and introduction to my services
+        2. Project scope and deliverables
+        3. Communication expectations and channels
+        4. Timeline with key milestones
+        5. Payment schedule and methods
+        6. Required materials and information from the client
+        7. Next steps
+        
+        Format the response with clear headings and professional language appropriate for a freelancer to share with a new client.
+      `;
+
+      // Generate the onboarding document with OpenAI
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+      });
+
+      const generatedText = response.choices[0].message.content;
+      const generationTime = (Date.now() - startTime) / 1000; // in seconds
+
+      // Save to history
+      await storage.createToolHistory({
+        userId,
+        toolType: "onboarding",
+        input: JSON.stringify({ clientName, businessType, projectType, timeline, budget, tone, additionalInfo }),
+        output: generatedText || "",
+        generationTime: Math.round(generationTime)
+      });
+
+      res.json({ 
+        text: generatedText,
+        generationTime 
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Create Stripe subscription endpoint
   app.post('/api/create-subscription', ensureStripeKeys, async (req: Request, res: Response) => {
     try {
