@@ -19,11 +19,11 @@ const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
         className={cn(
           "flex items-center py-2 px-3 rounded-lg mb-1 transition-all duration-300 cursor-pointer hover-scale",
           isActive
-            ? "bg-[#FFCC00] bg-opacity-20 border-l-2 border-[#FFCC00]"
+            ? "bg-[#FFE600] bg-opacity-20 border-l-2 border-[#FFE600]"
             : "hover:bg-black/40 hover:text-primary"
         )}
       >
-        <div className={cn("text-lg", isActive ? "text-[#FFCC00]" : "")}>
+        <div className={cn("text-lg", isActive ? "text-[#FFE600]" : "")}>
           {icon}
         </div>
         <span className={cn("ml-3 hidden md:block", isActive ? "font-bold text-black" : "")}>
@@ -144,7 +144,7 @@ const Sidebar = () => {
             <p className="text-muted-foreground text-xs mb-3">{trialDaysLeft} days remaining</p>
             <Link href="/subscribe">
               <Button
-                className="w-full py-1.5 px-3 bg-[#FFCC00] text-black text-sm font-medium hover-glow"
+                className="w-full py-1.5 px-3 bg-[#FFE600] text-black text-sm font-medium hover-glow"
                 size="sm"
               >
                 Upgrade to Pro
