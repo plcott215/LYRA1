@@ -2,14 +2,19 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { onAuthStateChange } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
 
+// Admin credentials
+const ADMIN_EMAIL = "admin@lyra.app";
+
 interface AuthContextProps {
   user: FirebaseUser | null;
   loading: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
   loading: true,
+  isAdmin: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -21,6 +26,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     try {
@@ -28,6 +34,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const unsubscribe = onAuthStateChange((user) => {
         console.log("Auth state changed:", user ? "Logged in" : "Not logged in");
         setUser(user);
+        
+        // Check if user is admin
+        setIsAdmin(user?.email === ADMIN_EMAIL);
+        
         setLoading(false);
       });
       
@@ -51,7 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -31,7 +31,7 @@ interface SubscriptionProviderProps {
 }
 
 export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [isPro, setIsPro] = useState(false);
   const [trialDaysLeft, setTrialDaysLeft] = useState(3);
   const [loading, setLoading] = useState(true);
@@ -47,6 +47,18 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
     if (!user) {
       setIsPro(false);
       setLoading(false);
+      return;
+    }
+
+    // If user is admin, automatically grant pro access
+    if (isAdmin) {
+      setIsPro(true);
+      setLoading(false);
+      setSubscriptionData({
+        status: "active",
+        startDate: new Date().toISOString(),
+        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+      });
       return;
     }
 
@@ -74,7 +86,7 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
       setIsPro(false);
       setLoading(false);
     }
-  }, [user]);
+  }, [user, isAdmin]); // Added isAdmin to the dependency array
 
   return (
     <SubscriptionContext.Provider

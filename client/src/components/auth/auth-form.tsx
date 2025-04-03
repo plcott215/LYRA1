@@ -28,9 +28,9 @@ const AuthForm = () => {
       if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         toast({
           title: "Admin Login Successful",
-          description: "Welcome to the admin dashboard!",
+          description: "You now have access to all Pro features!",
         });
-        setLocation("/admin/dashboard");
+        setLocation("/dashboard");
         return;
       }
       
