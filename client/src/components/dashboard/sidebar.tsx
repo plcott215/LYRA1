@@ -19,11 +19,11 @@ const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
         className={cn(
           "flex items-center py-2 px-3 rounded-lg mb-1 transition-all duration-300 cursor-pointer hover-scale",
           isActive
-            ? "bg-[#FFE600] bg-opacity-20 border-l-2 border-[#FFE600]"
-            : "hover:bg-black/40 hover:text-primary"
+            ? "bg-[#FFE600] border-l-2 border-[#FFE600] shadow-[0_0_25px_rgba(255,230,0,0.9)] neon-underglow-intense"
+            : "hover:bg-black/40 hover:text-primary hover:shadow-[0_0_15px_rgba(255,230,0,0.4)]"
         )}
       >
-        <div className={cn("text-lg", isActive ? "text-[#FFE600]" : "")}>
+        <div className={cn("text-lg", isActive ? "text-black text-shadow-sm" : "")}>
           {icon}
         </div>
         <span className={cn("ml-3 hidden md:block", isActive ? "font-bold text-black" : "")}>
@@ -82,7 +82,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="bg-card w-16 md:w-64 flex flex-col fixed h-full transition-all duration-300 z-20 border-r border-border">
+    <aside className="bg-card w-16 md:w-64 flex flex-col fixed h-full transition-all duration-300 z-20 border-r border-border shadow-[5px_0_20px_rgba(255,230,0,0.3)]">
       {/* Logo */}
       <div className="h-16 flex items-center justify-center md:justify-start px-4 border-b border-border">
         <Link href="/dashboard">
@@ -138,13 +138,13 @@ const Sidebar = () => {
       {/* Pro Upgrade */}
       {!isPro && (
         <div className="p-4 hidden md:block">
-          <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-20 rounded-full blur-xl"></div>
+          <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative shadow-[0_0_20px_rgba(255,230,0,0.7)] neon-underglow-pulsate">
+            <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-30 rounded-full blur-xl"></div>
             <h4 className="font-medium text-sm mb-1">Free Trial</h4>
             <p className="text-muted-foreground text-xs mb-3">{trialDaysLeft} days remaining</p>
             <Link href="/subscribe">
               <Button
-                className="w-full py-1.5 px-3 bg-[#FFE600] text-black text-sm font-medium hover-glow"
+                className="w-full py-1.5 px-3 bg-[#FFE600] text-black text-sm font-medium shadow-[0_0_15px_rgba(255,230,0,0.6)] hover:shadow-[0_0_25px_rgba(255,230,0,0.9)] transition-all duration-200 neon-underglow-intense"
                 size="sm"
               >
                 Upgrade to Pro

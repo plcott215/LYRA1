@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .text-shadow-sm {
+    text-shadow: 0 0 2px currentColor;
+  }
+  .text-shadow {
+    text-shadow: 0 0 4px currentColor;
+  }
+  .text-shadow-md {
+    text-shadow: 0 0 8px currentColor;
+  }
+  .text-shadow-lg {
+    text-shadow: 0 0 16px currentColor;
+  }
+  .text-shadow-none {
+    text-shadow: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -41,6 +59,46 @@
   .hover-pulse:hover {
     animation: pulse 1s infinite;
   }
+  
+  /* Neon underglow classes */
+  .neon-underglow {
+    @apply relative shadow-[0_0_20px_rgba(255,230,0,0.6)] z-10;
+    transition: all 0.3s ease;
+  }
+  
+  .neon-underglow-intense {
+    @apply relative shadow-[0_0_35px_rgba(255,230,0,0.9)] z-10;
+    transition: all 0.3s ease;
+  }
+  
+  .neon-underglow-pulsate {
+    animation: neon-pulsate 3s infinite;
+  }
+  
+  .neon-underglow-scan {
+    position: relative;
+    overflow: hidden;
+    @apply shadow-[0_0_25px_rgba(255,230,0,0.7)] z-10;
+  }
+  
+  .neon-underglow-scan::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 230, 0, 0.8), transparent);
+    animation: neon-scan 3s linear infinite;
+    z-index: -1;
+  }
+  
+  .neon-backdrop {
+    @apply relative;
+  }
+  
+  .neon-backdrop::before {
+    @apply content-[''] absolute inset-0 -z-10 bg-gradient-to-b from-[rgba(255,230,0,0.15)] to-transparent rounded-lg blur-lg;
+  }
 
   /* Yellow underline animation */
   .hover-underline {
@@ -68,5 +126,26 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes neon-pulsate {
+  0% {
+    box-shadow: 0 0 25px rgba(255, 230, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(255, 230, 0, 1);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(255, 230, 0, 0.6);
+  }
+}
+
+@keyframes neon-scan {
+  0% {
+    left: -150px;
+  }
+  100% {
+    left: 100%;
   }
 }
