@@ -11,13 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/lib/firebase";
+import { Badge } from "@/components/ui/badge";
 
 interface TopBarProps {
   title: string;
 }
 
 const TopBar = ({ title }: TopBarProps) => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { isPro, trialDaysLeft } = useSubscription();
 
   const initials = user?.email
@@ -35,7 +36,15 @@ const TopBar = ({ title }: TopBarProps) => {
       </div>
 
       <div className="flex items-center space-x-4">
-        {!isPro && (
+        {isAdmin && (
+          <Badge 
+            className="bg-primary text-black font-semibold shadow-[0_0_15px_rgba(255,230,0,0.7)]"
+          >
+            Admin
+          </Badge>
+        )}
+        
+        {!isPro && !isAdmin && (
           <div className="hidden md:flex items-center">
             <span className="text-muted-foreground text-sm mr-2">
               {trialDaysLeft} days left in trial
@@ -59,7 +68,16 @@ const TopBar = ({ title }: TopBarProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <div className="flex flex-col space-y-1 p-2">
-              <p className="text-sm font-medium leading-none">{user?.displayName || "User"}</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium leading-none">{user?.displayName || "User"}</p>
+                {isAdmin && (
+                  <Badge 
+                    className="bg-primary text-black text-xs shadow-[0_0_8px_rgba(255,230,0,0.5)]"
+                  >
+                    Admin
+                  </Badge>
+                )}
+              </div>
               <p className="text-xs leading-none text-muted-foreground">
                 {user?.email || ""}
               </p>
@@ -67,7 +85,7 @@ const TopBar = ({ title }: TopBarProps) => {
             <DropdownMenuSeparator />
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
-            {!isPro && (
+            {!isPro && !isAdmin && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>

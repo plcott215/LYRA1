@@ -2,17 +2,21 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/context/subscription-context";
+import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/ui/logo";
+import { Badge } from "@/components/ui/badge";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
   label: string;
   path: string;
   isActive: boolean;
+  isPro?: boolean;
+  isAdmin?: boolean;
 }
 
-const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
+const SidebarItem = ({ icon, label, path, isActive, isPro, isAdmin }: SidebarItemProps) => {
   return (
     <Link href={path}>
       <div
@@ -26,9 +30,21 @@ const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
         <div className={cn("text-lg", isActive ? "text-black text-shadow-sm" : "")}>
           {icon}
         </div>
-        <span className={cn("ml-3 hidden md:block", isActive ? "font-bold text-black" : "")}>
-          {label}
-        </span>
+        <div className="flex items-center justify-between flex-1">
+          <span className={cn("ml-3 hidden md:block", isActive ? "font-bold text-black" : "")}>
+            {label}
+          </span>
+          {isPro && !isActive && (
+            <span className="hidden md:inline-flex ml-2">
+              <Badge 
+                variant="outline" 
+                className="text-primary text-[10px] border-primary py-0 px-1.5 h-4"
+              >
+                PRO
+              </Badge>
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );
@@ -37,6 +53,7 @@ const SidebarItem = ({ icon, label, path, isActive }: SidebarItemProps) => {
 const Sidebar = () => {
   const [location] = useLocation();
   const { isPro, trialDaysLeft } = useSubscription();
+  const { isAdmin } = useAuth();
 
   const sidebarItems = [
     {
@@ -48,6 +65,7 @@ const Sidebar = () => {
       icon: <i className="ri-mail-line" />,
       label: "Email Rewriter",
       path: "/dashboard/email",
+      isPro: true,
     },
     {
       icon: <i className="ri-money-dollar-circle-line" />,
@@ -58,16 +76,19 @@ const Sidebar = () => {
       icon: <i className="ri-file-list-3-line" />,
       label: "Contract Explainer",
       path: "/dashboard/contract",
+      isPro: true,
     },
     {
       icon: <i className="ri-mic-line" />,
       label: "Voice-to-Brief",
       path: "/dashboard/voice",
+      isPro: true,
     },
     {
       icon: <i className="ri-user-add-line" />,
       label: "Client Onboarding",
       path: "/dashboard/onboarding",
+      isPro: true,
     },
     {
       icon: <i className="ri-history-line" />,
@@ -100,9 +121,18 @@ const Sidebar = () => {
       {/* Navigation */}
       <nav className="flex-1 py-4 overflow-y-auto">
         <div className="px-3 mb-6">
-          <p className="text-muted-foreground text-xs uppercase tracking-wider hidden md:block mb-2 px-3">
-            Tools
-          </p>
+          <div className="flex items-center justify-between pr-3">
+            <p className="text-muted-foreground text-xs uppercase tracking-wider hidden md:block mb-2 px-3">
+              Tools
+            </p>
+            {isAdmin && (
+              <Badge 
+                className="bg-primary text-black text-xs shadow-[0_0_8px_rgba(255,230,0,0.5)] hidden md:flex"
+              >
+                Admin Access
+              </Badge>
+            )}
+          </div>
 
           {sidebarItems.slice(0, 6).map((item) => (
             <SidebarItem
@@ -110,6 +140,8 @@ const Sidebar = () => {
               icon={item.icon}
               label={item.label}
               path={item.path}
+              isPro={item.isPro}
+              isAdmin={isAdmin}
               isActive={
                 location === item.path ||
                 (item.path === "/dashboard" && location === "/dashboard")
@@ -135,8 +167,8 @@ const Sidebar = () => {
         </div>
       </nav>
 
-      {/* Pro Upgrade */}
-      {!isPro && (
+      {/* Pro Upgrade - Only show for non-pro and non-admin users */}
+      {!isPro && !isAdmin && (
         <div className="p-4 hidden md:block">
           <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative shadow-[0_0_20px_rgba(255,230,0,0.7)]">
             <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-30 rounded-full blur-xl"></div>
