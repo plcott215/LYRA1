@@ -29,7 +29,7 @@ const TopBar = ({ title }: TopBarProps) => {
   };
 
   return (
-    <header className="h-16 border-b border-border flex items-center justify-between px-4 sticky top-0 bg-background z-10 shadow-[0_0_15px_rgba(255,230,0,0.4)]">
+    <header className="h-16 border-b border-border flex items-center justify-between px-4 sticky top-0 bg-background z-10">
       <div>
         <h1 className="text-xl font-semibold">{title}</h1>
       </div>
@@ -41,7 +41,7 @@ const TopBar = ({ title }: TopBarProps) => {
               {trialDaysLeft} days left in trial
             </span>
             <Link href="/subscribe">
-              <Button className="py-1 px-3 bg-primary text-black text-sm font-medium shadow-[0_0_15px_rgba(255,230,0,0.6)] hover:shadow-[0_0_25px_rgba(255,230,0,0.9)] transition-all duration-200 neon-underglow-intense">
+              <Button className="py-1 px-3 bg-primary text-black text-sm font-medium shadow-[0_0_15px_rgba(255,230,0,0.6)] hover:shadow-[0_0_25px_rgba(255,230,0,0.9)] transition-all duration-200">
                 Upgrade
               </Button>
             </Link>

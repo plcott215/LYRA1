@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const ProBanner = () => {
   return (
-    <Card className="bg-card rounded-lg p-5 relative overflow-hidden shadow-[0_0_25px_rgba(255,230,0,0.8)] neon-underglow-pulsate">
+    <Card className="bg-card rounded-lg p-5 relative overflow-hidden shadow-[0_0_25px_rgba(255,230,0,0.8)]">
       <div className="absolute -right-20 -top-20 w-80 h-80 bg-primary opacity-20 rounded-full blur-3xl"></div>
       
       <CardContent className="p-0 flex flex-col md:flex-row items-center justify-between">
@@ -18,7 +18,7 @@ const ProBanner = () => {
         
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/subscribe">
-            <Button className="py-2 px-4 bg-primary text-black font-medium shadow-[0_0_15px_rgba(255,230,0,0.6)] hover:shadow-[0_0_25px_rgba(255,230,0,0.9)] transition-all duration-200 neon-underglow-intense">
+            <Button className="py-2 px-4 bg-primary text-black font-medium shadow-[0_0_15px_rgba(255,230,0,0.6)] hover:shadow-[0_0_25px_rgba(255,230,0,0.9)] transition-all duration-200">
               Upgrade to Pro - $19/month
             </Button>
           </Link>
