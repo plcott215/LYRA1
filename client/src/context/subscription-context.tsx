@@ -44,39 +44,24 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
   const { toast } = useToast();
 
   const checkSubscription = async () => {
-    if (!user) {
-      setIsPro(false);
-      setLoading(false);
-      return;
-    }
-
-    // If user is admin, automatically grant pro access
-    if (isAdmin) {
-      setIsPro(true);
-      setLoading(false);
-      setSubscriptionData({
-        status: "active",
-        startDate: new Date().toISOString(),
-        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
-      });
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await apiRequest("GET", "/api/subscription");
-      const data = await response.json();
-      
-      setIsPro(data.isPro || false);
-      setTrialDaysLeft(data.trialDaysLeft || 3);
-      setSubscriptionData(data.subscriptionData || null);
-    } catch (error) {
-      // If there's an error, assume user is on free tier
-      setIsPro(false);
-      console.error("Error checking subscription:", error);
-    } finally {
-      setLoading(false);
-    }
+    // Always set Pro status to true and loading to false
+    setIsPro(true);
+    setLoading(false);
+    
+    // Set subscription data with active status and long expiry
+    const startDate = new Date().toISOString();
+    const endDate = new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toISOString();
+    
+    setSubscriptionData({
+      status: "active",
+      startDate: startDate,
+      endDate: endDate,
+    });
+    
+    // Set trial days to 0 since we're fully Pro now
+    setTrialDaysLeft(0);
+    
+    // No need to make API calls since we're forcing Pro status
   };
 
   useEffect(() => {

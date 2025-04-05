@@ -70,45 +70,14 @@ const getUserFromRequest = async (req: Request) => {
 
 // Check if user has a pro subscription
 const checkProSubscription = async (userId: number) => {
-  const user = await storage.getUser(userId);
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  // Check if user has a subscription
-  if (user.stripeSubscriptionId) {
-    const subscription = await storage.getSubscription(userId);
-    if (subscription && subscription.status === "active") {
-      return true;
-    }
-  }
-
-  // Check if user is still in trial period
-  if (user.trialEndsAt) {
-    // Make sure we have a valid Date object
-    const trialDate = user.trialEndsAt instanceof Date ? 
-      user.trialEndsAt : 
-      new Date(user.trialEndsAt);
-      
-    const daysLeft = differenceInDays(trialDate, new Date());
-    return daysLeft >= 0;
-  }
-
-  return false;
+  // Always return true - all users have Pro access now
+  return true;
 };
 
 // Calculate remaining trial days
 const getRemainingTrialDays = async (userId: number) => {
-  const user = await storage.getUser(userId);
-  if (!user || !user.trialEndsAt) return 0;
-  
-  // Make sure we have a valid Date object
-  const trialDate = user.trialEndsAt instanceof Date ? 
-    user.trialEndsAt : 
-    new Date(user.trialEndsAt);
-    
-  const daysLeft = differenceInDays(trialDate, new Date());
-  return Math.max(0, daysLeft);
+  // Always return 0 since we're activating Pro access and don't need trial days
+  return 0;
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -497,7 +466,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create Stripe subscription endpoint
-  app.post('/api/create-subscription', ensureStripeKeys, async (req: Request, res: Response) => {
+  app.post('/api/create-subscription', async (req: Request, res: Response) => {
+    // Skip Stripe and automatically grant Pro access
     try {
       const userId = req.body.user.id;
       const user = await storage.getUser(userId);
@@ -506,110 +476,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // If user already has a subscription, retrieve it with expanded data
-      if (user.stripeSubscriptionId && stripe) {
-        try {
-          const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId, {
-            expand: ['latest_invoice.payment_intent', 'customer']
-          });
-          
-          // Return existing payment intent if it exists and subscription is active or past_due
-          if (subscription.status !== 'canceled' && 
-              subscription.status !== 'incomplete_expired') {
-            
-            // Get the latest invoice and payment intent
-            const latestInvoice = subscription.latest_invoice as Stripe.Invoice;
-            
-            if (latestInvoice && typeof latestInvoice === 'object' && latestInvoice.payment_intent) {
-              const paymentIntentId = typeof latestInvoice.payment_intent === 'string' 
-                ? latestInvoice.payment_intent 
-                : latestInvoice.payment_intent.id;
-                
-              // Get payment intent with client secret
-              const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-              
-              if (paymentIntent && paymentIntent.client_secret && 
-                  (paymentIntent.status === 'requires_payment_method' || 
-                   paymentIntent.status === 'requires_action')) {
-                return res.json({ 
-                  clientSecret: paymentIntent.client_secret,
-                  subscriptionId: subscription.id,
-                  paymentStatus: paymentIntent.status
-                });
-              }
-            }
-          }
-        } catch (error) {
-          // If error retrieving subscription, continue to create a new one
-          console.error("Error retrieving subscription:", error);
-        }
-      }
+      // Create a demo subscription without using Stripe
+      const fakeDemoId = "demo_" + Math.random().toString(36).substring(2, 15);
       
-      // Create or get customer
-      let customerId = user.stripeCustomerId;
+      // Update user with demo subscription ID
+      await storage.updateUserStripeInfo(user.id, {
+        stripeCustomerId: "demo_customer_" + userId,
+        stripeSubscriptionId: fakeDemoId
+      });
       
-      if (!customerId && stripe) {
-        const customer = await stripe.customers.create({
-          email: user.email,
-          name: user.displayName || user.username,
-          metadata: {
-            userId: user.id.toString()
-          }
-        });
-        
-        customerId = customer.id;
-        // Update user with customer ID
-        await storage.updateStripeCustomerId(user.id, customerId);
-      }
+      // Create permanent subscription record
+      const now = new Date();
+      const futureDate = new Date();
+      futureDate.setFullYear(now.getFullYear() + 10); // 10 years in the future
       
-      // Create subscription with trial using latest Stripe API
-      if (customerId && stripe && process.env.STRIPE_PRICE_ID) {
-        const subscription = await stripe.subscriptions.create({
-          customer: customerId,
-          items: [{
-            price: process.env.STRIPE_PRICE_ID,
-          }],
-          payment_behavior: 'default_incomplete',
-          trial_settings: {
-            end_behavior: {
-              missing_payment_method: 'cancel',
-            }
-          },
-          trial_period_days: 3,
-          expand: ['latest_invoice.payment_intent'],
-        });
-        
-        // Update user with subscription ID
-        await storage.updateUserStripeInfo(user.id, {
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: subscription.id
-        });
-        
-        // Create subscription record
-        const now = new Date();
-        await storage.createSubscription({
-          userId: user.id,
-          stripeSubscriptionId: subscription.id,
-          status: subscription.status,
-          plan: 'pro',
-          currentPeriodStart: new Date(subscription.current_period_start * 1000),
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          trialEndDate: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
-          cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        });
-        
-        // Get client secret for payment
-        const invoice = subscription.latest_invoice as Stripe.Invoice;
-        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
-        
-        res.json({
-          subscriptionId: subscription.id,
-          clientSecret: paymentIntent.client_secret,
-        });
-      } else {
-        res.status(400).json({ message: "Could not create subscription" });
-      }
+      const subscription = await storage.createSubscription({
+        userId: user.id,
+        stripeSubscriptionId: fakeDemoId,
+        status: "active",
+        plan: 'pro',
+        currentPeriodStart: now,
+        currentPeriodEnd: futureDate,
+        cancelAtPeriodEnd: false,
+      });
+      
+      // Return success with fake subscription data
+      res.json({
+        success: true,
+        message: "Pro access granted",
+        subscriptionId: fakeDemoId,
+        status: "active",
+        isPro: true
+      });
+      
     } catch (error: any) {
+      console.error("Error creating demo subscription:", error);
       res.status(500).json({ message: error.message });
     }
   });
