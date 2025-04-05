@@ -62,9 +62,51 @@ export class MemStorage implements IStorage {
     this.users = new Map();
     this.toolHistory = new Map();
     this.subscriptions = new Map();
-    this.currentUserId = 1;
+    this.currentUserId = 1000; // Start higher to avoid conflicts with demo user
     this.currentToolHistoryId = 1;
     this.currentSubscriptionId = 1;
+    
+    // Initialize demo user with Pro subscription
+    this.setupDemoUser();
+  }
+  
+  private setupDemoUser() {
+    // Create demo user with ID 999
+    const now = new Date();
+    const futureDate = new Date();
+    futureDate.setFullYear(now.getFullYear() + 1); // 1 year in the future
+    
+    // Add demo user
+    const demoUser: User = {
+      id: 999,
+      username: "demo",
+      email: "demo@lyra.app",
+      displayName: "Demo User",
+      photoURL: "https://ui-avatars.com/api/?name=Demo+User&background=random",
+      authProvider: "demo",
+      providerId: "demo-user-123",
+      password: null,
+      stripeCustomerId: "demo_customer_id",
+      stripeSubscriptionId: "demo_subscription_id",
+      trialEndsAt: futureDate,
+      createdAt: now
+    };
+    this.users.set(999, demoUser);
+    
+    // Add subscription for demo user
+    const demoSubscription: Subscription = {
+      id: 999,
+      userId: 999,
+      stripeSubscriptionId: "demo_subscription_id",
+      status: "active",
+      plan: "pro",
+      currentPeriodStart: now,
+      currentPeriodEnd: futureDate,
+      trialEndDate: null,
+      cancelAtPeriodEnd: false,
+      createdAt: now
+    };
+    this.subscriptions.set(999, demoSubscription);
   }
 
   // User operations

@@ -9,14 +9,17 @@ let developmentMode = process.env.NODE_ENV !== 'production';
 developmentMode = true;
 console.log("Running in development mode - using demo user for authentication");
 
-// Mock user for demo mode
+// Mock user for demo mode with Pro subscription
 const DEMO_USER = {
   id: 999,
   uid: "demo-user-123",
   email: "demo@lyra.app",
   displayName: "Demo User",
   photoURL: "https://ui-avatars.com/api/?name=Demo+User&background=random",
-  providerId: "demo"
+  providerId: "demo",
+  // Add Pro subscription flags
+  isPro: true,
+  isAdmin: true
 };
 
 export const validateFirebaseToken = async (req: Request, res: Response, next: NextFunction) => {
