@@ -34,16 +34,7 @@ const SidebarItem = ({ icon, label, path, isActive, isPro, isAdmin }: SidebarIte
           <span className={cn("ml-3 hidden md:block", isActive ? "font-bold text-black" : "")}>
             {label}
           </span>
-          {isPro && !isActive && (
-            <span className="hidden md:inline-flex ml-2">
-              <Badge 
-                variant="outline" 
-                className="text-primary text-[10px] border-primary py-0 px-1.5 h-4"
-              >
-                PRO
-              </Badge>
-            </span>
-          )}
+          {/* No longer showing any PRO badges since all users have Pro access */}
         </div>
       </div>
     </Link>
@@ -167,24 +158,14 @@ const Sidebar = () => {
         </div>
       </nav>
 
-      {/* Pro Upgrade - Only show for non-pro and non-admin users */}
-      {!isPro && !isAdmin && (
-        <div className="p-4 hidden md:block">
-          <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative shadow-[0_0_20px_rgba(255,230,0,0.7)]">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-30 rounded-full blur-xl"></div>
-            <h4 className="font-medium text-sm mb-1">Free Trial</h4>
-            <p className="text-muted-foreground text-xs mb-3">{trialDaysLeft} days remaining</p>
-            <Link href="/subscribe">
-              <Button
-                className="w-full py-1.5 px-3 bg-[#FFE600] text-black text-sm font-medium shadow-[0_0_15px_rgba(255,230,0,0.6)] hover:shadow-[0_0_25px_rgba(255,230,0,0.9)] transition-all duration-200"
-                size="sm"
-              >
-                Upgrade to Pro
-              </Button>
-            </Link>
-          </div>
+      {/* Pro status notification - All users now have Pro access */}
+      <div className="p-4 hidden md:block">
+        <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative shadow-[0_0_15px_rgba(255,230,0,0.5)]">
+          <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-20 rounded-full blur-xl"></div>
+          <h4 className="font-medium text-sm mb-1">Pro Access Enabled</h4>
+          <p className="text-muted-foreground text-xs mb-2">All premium features unlocked</p>
         </div>
-      )}
+      </div>
     </aside>
   );
 };

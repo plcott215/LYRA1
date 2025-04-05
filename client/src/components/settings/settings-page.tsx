@@ -129,13 +129,7 @@ export const SettingsPage = () => {
                   </p>
                 )}
               </div>
-              {!isPro && (
-                <Link href="/subscribe">
-                  <Button className="bg-primary text-black font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)]">
-                    Upgrade to Pro
-                  </Button>
-                </Link>
-              )}
+              {/* Upgrade button removed - All users have Pro access */}
               {isPro && (
                 <Button variant="outline">
                   Manage Subscription
@@ -154,10 +148,7 @@ export const SettingsPage = () => {
             </div>
             <div className="bg-background p-4 rounded-md">
               <h4 className="font-medium mb-2">History</h4>
-              <p className="text-sm text-muted-foreground">30 days of history retention</p>
-              {!isPro && (
-                <p className="text-xs text-primary mt-2">Upgrade to Pro for unlimited history</p>
-              )}
+              <p className="text-sm text-muted-foreground">Unlimited history retention</p>
             </div>
           </div>
         </CardContent>
@@ -210,18 +201,15 @@ export const SettingsPage = () => {
 
       {/* Appearance Settings */}
       <Card className="shadow-[0_0_10px_rgba(252,238,9,0.2)]">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle>Appearance</CardTitle>
-          {!isPro && (
-            <Badge className="bg-primary text-black">Pro Feature</Badge>
-          )}
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-3 gap-3">
             <div 
               className={`p-4 rounded-md flex flex-col items-center justify-center cursor-pointer border-2 ${
                 theme === "light" ? "border-primary" : "border-transparent"
-              } ${!canToggleTheme ? 'opacity-100' : 'opacity-100'}`}
+              } opacity-100 cursor-pointer`}
               onClick={() => setTheme("light")}
             >
               <div className="w-10 h-10 rounded-md bg-white border mb-2"></div>
@@ -229,59 +217,23 @@ export const SettingsPage = () => {
             </div>
             
             <div 
-              className={`p-4 rounded-md flex flex-col items-center justify-center border-2 ${
+              className={`p-4 rounded-md flex flex-col items-center justify-center cursor-pointer border-2 ${
                 theme === "dark" ? "border-primary" : "border-transparent"
-              } ${canToggleTheme ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-              onClick={() => canToggleTheme && setTheme("dark")}
+              } opacity-100`}
+              onClick={() => setTheme("dark")}
             >
-              <div className="relative">
-                <div className="w-10 h-10 rounded-md bg-black border mb-2"></div>
-                {!canToggleTheme && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="text-sm font-medium">Dark</span>
-                {!canToggleTheme && (
-                  <span className="inline-block w-3 h-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="text-primary">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                    </svg>
-                  </span>
-                )}
-              </div>
+              <div className="w-10 h-10 rounded-md bg-black border mb-2"></div>
+              <span className="text-sm font-medium">Dark</span>
             </div>
             
             <div 
-              className={`p-4 rounded-md flex flex-col items-center justify-center border-2 ${
+              className={`p-4 rounded-md flex flex-col items-center justify-center cursor-pointer border-2 ${
                 theme === "system" ? "border-primary" : "border-transparent"
-              } ${canToggleTheme ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-              onClick={() => canToggleTheme && setTheme("system")}
+              } opacity-100`}
+              onClick={() => setTheme("system")}
             >
-              <div className="relative">
-                <div className="w-10 h-10 rounded-md bg-gradient-to-r from-white to-black border mb-2"></div>
-                {!canToggleTheme && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="text-sm font-medium">System</span>
-                {!canToggleTheme && (
-                  <span className="inline-block w-3 h-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="text-primary">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                    </svg>
-                  </span>
-                )}
-              </div>
+              <div className="w-10 h-10 rounded-md bg-gradient-to-r from-white to-black border mb-2"></div>
+              <span className="text-sm font-medium">System</span>
             </div>
           </div>
 
