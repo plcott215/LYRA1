@@ -13,6 +13,7 @@ import NotFound from "@/pages/not-found";
 const AdminDashboard = lazy(() => import("./pages/admin/dashboard"));
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "./context/theme-context";
 
 function App() {
   const { user, loading } = useAuth();

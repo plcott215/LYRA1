@@ -11,9 +11,12 @@ import { z } from "zod";
 // Initialize OpenAI client
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 
-// Initialize Stripe client
+// Initialize Stripe client with the latest API version
 const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-02-24.acacia', // Using the latest API version
+      typescript: true,
+    })
   : null;
 
 // Middleware to ensure OpenAI API key is provided
@@ -503,25 +506,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // If user already has a subscription, retrieve it
+      // If user already has a subscription, retrieve it with expanded data
       if (user.stripeSubscriptionId && stripe) {
         try {
-          const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+          const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId, {
+            expand: ['latest_invoice.payment_intent', 'customer']
+          });
           
-          // Return existing payment intent if it exists
-          if (subscription.status !== 'canceled') {
+          // Return existing payment intent if it exists and subscription is active or past_due
+          if (subscription.status !== 'canceled' && 
+              subscription.status !== 'incomplete_expired') {
+            
+            // Get the latest invoice and payment intent
             const latestInvoice = subscription.latest_invoice as Stripe.Invoice;
+            
             if (latestInvoice && typeof latestInvoice === 'object' && latestInvoice.payment_intent) {
-              const paymentIntent = await stripe.paymentIntents.retrieve(
-                typeof latestInvoice.payment_intent === 'string' 
-                  ? latestInvoice.payment_intent 
-                  : latestInvoice.payment_intent.id
-              );
+              const paymentIntentId = typeof latestInvoice.payment_intent === 'string' 
+                ? latestInvoice.payment_intent 
+                : latestInvoice.payment_intent.id;
+                
+              // Get payment intent with client secret
+              const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
               
-              if (paymentIntent && paymentIntent.client_secret) {
+              if (paymentIntent && paymentIntent.client_secret && 
+                  (paymentIntent.status === 'requires_payment_method' || 
+                   paymentIntent.status === 'requires_action')) {
                 return res.json({ 
                   clientSecret: paymentIntent.client_secret,
-                  subscriptionId: subscription.id
+                  subscriptionId: subscription.id,
+                  paymentStatus: paymentIntent.status
                 });
               }
             }
@@ -549,7 +562,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateStripeCustomerId(user.id, customerId);
       }
       
-      // Create subscription with trial
+      // Create subscription with trial using latest Stripe API
       if (customerId && stripe && process.env.STRIPE_PRICE_ID) {
         const subscription = await stripe.subscriptions.create({
           customer: customerId,
@@ -557,6 +570,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             price: process.env.STRIPE_PRICE_ID,
           }],
           payment_behavior: 'default_incomplete',
+          trial_settings: {
+            end_behavior: {
+              missing_payment_method: 'cancel',
+            }
+          },
           trial_period_days: 3,
           expand: ['latest_invoice.payment_intent'],
         });

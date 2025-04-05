@@ -7,11 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
 import { useSubscription } from "@/context/subscription-context";
+import { useTheme } from "@/context/theme-context";
 import { Link } from "wouter";
+import { Badge } from "@/components/ui/badge";
 
 export const SettingsPage = () => {
   const { user } = useAuth();
   const { isPro, subscriptionData } = useSubscription();
+  const { theme, setTheme, canToggleTheme } = useTheme();
   const { toast } = useToast();
   
   // Account settings
@@ -22,9 +25,6 @@ export const SettingsPage = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [exportNotifications, setExportNotifications] = useState(true);
   const [weeklyReports, setWeeklyReports] = useState(false);
-  
-  // Appearance settings
-  const [theme, setTheme] = useState("light");
   
   // API settings
   const [signature, setSignature] = useState("");
@@ -45,13 +45,12 @@ export const SettingsPage = () => {
   
   const handleSaveAppearance = async () => {
     try {
-      // In a real application, this would update the theme on the server
-      // For demo purposes, we're just showing a toast notification
+      // We don't need to do anything special here since setTheme in 
+      // ThemeContext already updates localStorage and applies the theme
       
-      // Simulating a successful update
       toast({
         title: "Appearance Settings Updated",
-        description: "Your theme preferences have been saved. Refresh to see changes.",
+        description: "Your theme preferences have been saved.",
       });
     } catch (error) {
       toast({
@@ -211,15 +210,18 @@ export const SettingsPage = () => {
 
       {/* Appearance Settings */}
       <Card className="shadow-[0_0_10px_rgba(252,238,9,0.2)]">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Appearance</CardTitle>
+          {!isPro && (
+            <Badge className="bg-primary text-black">Pro Feature</Badge>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-3 gap-3">
             <div 
               className={`p-4 rounded-md flex flex-col items-center justify-center cursor-pointer border-2 ${
                 theme === "light" ? "border-primary" : "border-transparent"
-              }`}
+              } ${!canToggleTheme ? 'opacity-100' : 'opacity-100'}`}
               onClick={() => setTheme("light")}
             >
               <div className="w-10 h-10 rounded-md bg-white border mb-2"></div>
@@ -227,27 +229,78 @@ export const SettingsPage = () => {
             </div>
             
             <div 
-              className={`p-4 rounded-md flex flex-col items-center justify-center cursor-pointer border-2 ${
+              className={`p-4 rounded-md flex flex-col items-center justify-center border-2 ${
                 theme === "dark" ? "border-primary" : "border-transparent"
-              }`}
-              onClick={() => setTheme("dark")}
+              } ${canToggleTheme ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+              onClick={() => canToggleTheme && setTheme("dark")}
             >
-              <div className="w-10 h-10 rounded-md bg-black border mb-2"></div>
-              <span className="text-sm font-medium">Dark</span>
+              <div className="relative">
+                <div className="w-10 h-10 rounded-md bg-black border mb-2"></div>
+                {!canToggleTheme && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center space-x-1">
+                <span className="text-sm font-medium">Dark</span>
+                {!canToggleTheme && (
+                  <span className="inline-block w-3 h-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="text-primary">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                )}
+              </div>
             </div>
             
             <div 
-              className={`p-4 rounded-md flex flex-col items-center justify-center cursor-pointer border-2 ${
+              className={`p-4 rounded-md flex flex-col items-center justify-center border-2 ${
                 theme === "system" ? "border-primary" : "border-transparent"
-              }`}
-              onClick={() => setTheme("system")}
+              } ${canToggleTheme ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+              onClick={() => canToggleTheme && setTheme("system")}
             >
-              <div className="w-10 h-10 rounded-md bg-gradient-to-r from-white to-black border mb-2"></div>
-              <span className="text-sm font-medium">System</span>
+              <div className="relative">
+                <div className="w-10 h-10 rounded-md bg-gradient-to-r from-white to-black border mb-2"></div>
+                {!canToggleTheme && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center space-x-1">
+                <span className="text-sm font-medium">System</span>
+                {!canToggleTheme && (
+                  <span className="inline-block w-3 h-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="text-primary">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          <Button onClick={handleSaveAppearance} className="bg-primary text-black font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)]">
+          {!canToggleTheme && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm dark:bg-yellow-950 dark:border-yellow-800 dark:text-yellow-200">
+              <p className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                Dark mode is a Pro feature. <Link href="/subscribe" className="text-primary font-medium ml-1 hover:underline">Upgrade to Pro</Link> to unlock this and other premium features.
+              </p>
+            </div>
+          )}
+
+          <Button 
+            onClick={handleSaveAppearance} 
+            className="bg-primary text-black font-medium hover:shadow-[0_0_10px_rgba(252,238,9,0.5)]"
+            disabled={!canToggleTheme}
+          >
             Save Appearance Settings
           </Button>
         </CardContent>
