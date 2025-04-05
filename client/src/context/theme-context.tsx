@@ -28,7 +28,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   
   // Function to set the theme
   const setTheme = (newTheme: "light" | "dark" | "system") => {
-    // Everyone can use all themes - Pro restriction removed
+    // Only Pro users can use dark mode
+    if (!isPro && (newTheme === "dark" || newTheme === "system")) {
+      // For non-Pro users, force light theme
+      localStorage.setItem("lyra-theme", "light");
+      setThemeState("light");
+      applyTheme("light");
+      return;
+    }
     
     // Set theme in localStorage
     localStorage.setItem("lyra-theme", newTheme);
@@ -74,7 +81,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   useEffect(() => {
     const savedTheme = localStorage.getItem("lyra-theme") as "light" | "dark" | "system" | null;
     
-    // Allow any theme for all users - Pro restriction removed
+    // Only Pro users can use dark mode
+    if (!isPro && savedTheme && (savedTheme === "dark" || savedTheme === "system")) {
+      // Force light mode for non-Pro users
+      setThemeState("light");
+      applyTheme("light");
+      localStorage.setItem("lyra-theme", "light");
+      return;
+    }
     
     // If there's a saved theme, use it
     if (savedTheme) {
@@ -84,7 +98,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       // Default is light mode
       setTheme("light");
     }
-  }, []);
+  }, [isPro]);
 
   return (
     <ThemeContext.Provider
@@ -92,7 +106,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         theme,
         setTheme,
         isDarkMode,
-        canToggleTheme: true, // All users can toggle theme now
+        canToggleTheme: isPro, // Only Pro users can toggle theme
       }}
     >
       {children}

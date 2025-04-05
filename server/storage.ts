@@ -138,12 +138,20 @@ export class MemStorage implements IStorage {
     // Set trial to end in 3 days
     const trialEndsAt = addDays(now, 3);
     
+    // Ensuring all fields are properly typed
     const user: User = { 
-      ...this.defaultUser,
-      ...insertUser, 
-      id, 
-      createdAt: now,
-      trialEndsAt
+      id,
+      username: insertUser.username || "",
+      email: insertUser.email || "",
+      password: insertUser.password || null,
+      authProvider: insertUser.authProvider || null,
+      providerId: insertUser.providerId || null,
+      displayName: insertUser.displayName || null,
+      photoURL: insertUser.photoURL || null,
+      stripeCustomerId: insertUser.stripeCustomerId || null,
+      stripeSubscriptionId: insertUser.stripeSubscriptionId || null,
+      trialEndsAt: trialEndsAt,
+      createdAt: now
     };
     
     this.users.set(id, user);
@@ -172,11 +180,18 @@ export class MemStorage implements IStorage {
     const id = this.currentSubscriptionId++;
     const now = new Date();
     
+    // Ensuring all fields are properly typed
     const subscription: Subscription = { 
-      ...this.defaultSubscription,
-      ...insertSubscription, 
-      id, 
-      createdAt: now 
+      id,
+      stripeSubscriptionId: insertSubscription.stripeSubscriptionId || "",
+      status: insertSubscription.status || "inactive",
+      userId: insertSubscription.userId,
+      plan: insertSubscription.plan || "free",
+      currentPeriodStart: insertSubscription.currentPeriodStart || now,
+      currentPeriodEnd: insertSubscription.currentPeriodEnd || now,
+      trialEndDate: insertSubscription.trialEndDate || null,
+      cancelAtPeriodEnd: insertSubscription.cancelAtPeriodEnd || null,
+      createdAt: now
     };
     
     this.subscriptions.set(id, subscription);
@@ -243,11 +258,18 @@ export class MemStorage implements IStorage {
     const id = this.currentToolHistoryId++;
     const now = new Date();
     
+    // Ensuring all fields are properly typed
     const history: ToolHistory = { 
-      ...this.defaultToolHistory,
-      ...insertHistory, 
-      id, 
-      createdAt: now 
+      id,
+      userId: insertHistory.userId,
+      toolType: insertHistory.toolType,
+      input: insertHistory.input,
+      output: insertHistory.output,
+      action: insertHistory.action || null,
+      format: insertHistory.format || null,
+      metadata: insertHistory.metadata || null,
+      generationTime: insertHistory.generationTime || null,
+      createdAt: now
     };
     
     this.toolHistory.set(id, history);

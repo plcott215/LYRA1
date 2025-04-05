@@ -3,6 +3,18 @@ import { useAuth } from "./auth-context";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+// Define the subscription response type
+interface SubscriptionResponse {
+  isPro: boolean;
+  trialDaysLeft: number;
+  subscriptionData: {
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+    trialEnd?: string;
+  } | null;
+}
+
 interface SubscriptionContextProps {
   isPro: boolean;
   trialDaysLeft: number;
@@ -44,24 +56,33 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
   const { toast } = useToast();
 
   const checkSubscription = async () => {
-    // Always set Pro status to true and loading to false
-    setIsPro(true);
-    setLoading(false);
+    if (!user) {
+      setIsPro(false);
+      setLoading(false);
+      return;
+    }
     
-    // Set subscription data with active status and long expiry
-    const startDate = new Date().toISOString();
-    const endDate = new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toISOString();
-    
-    setSubscriptionData({
-      status: "active",
-      startDate: startDate,
-      endDate: endDate,
-    });
-    
-    // Set trial days to 0 since we're fully Pro now
-    setTrialDaysLeft(0);
-    
-    // No need to make API calls since we're forcing Pro status
+    try {
+      // Fetch subscription status from server for all users
+      const data = await apiRequest<SubscriptionResponse>({
+        url: "/api/subscription",
+        method: "GET",
+      });
+      
+      // Set subscription status from server response
+      setIsPro(!!data.isPro);
+      setTrialDaysLeft(data.trialDaysLeft || 0);
+      setSubscriptionData(data.subscriptionData);
+      setLoading(false);
+    } catch (error) {
+      // Default to non-Pro access if API fails
+      setIsPro(false);
+      setLoading(false);
+      setTrialDaysLeft(0);
+      
+      // Only log this error, don't show it to the user
+      console.error("Error checking subscription:", error);
+    }
   };
 
   useEffect(() => {

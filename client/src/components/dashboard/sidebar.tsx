@@ -34,7 +34,16 @@ const SidebarItem = ({ icon, label, path, isActive, isPro, isAdmin }: SidebarIte
           <span className={cn("ml-3 hidden md:block", isActive ? "font-bold text-black" : "")}>
             {label}
           </span>
-          {/* No longer showing any PRO badges since all users have Pro access */}
+          {isPro && (
+            <Badge 
+              className={cn(
+                "ml-2 bg-primary text-black text-[9px] shadow-[0_0_8px_rgba(255,230,0,0.5)] hidden md:flex",
+                isActive ? "bg-black text-primary" : ""
+              )}
+            >
+              PRO
+            </Badge>
+          )}
         </div>
       </div>
     </Link>
@@ -158,13 +167,25 @@ const Sidebar = () => {
         </div>
       </nav>
 
-      {/* Pro status notification - All users now have Pro access */}
+      {/* Pro status notification */}
       <div className="p-4 hidden md:block">
-        <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative shadow-[0_0_15px_rgba(255,230,0,0.5)]">
-          <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-20 rounded-full blur-xl"></div>
-          <h4 className="font-medium text-sm mb-1">Pro Access Enabled</h4>
-          <p className="text-muted-foreground text-xs mb-2">All premium features unlocked</p>
-        </div>
+        {isPro ? (
+          <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative shadow-[0_0_15px_rgba(255,230,0,0.5)]">
+            <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary opacity-20 rounded-full blur-xl"></div>
+            <h4 className="font-medium text-sm mb-1">Pro Access Enabled</h4>
+            <p className="text-muted-foreground text-xs mb-2">All premium features unlocked</p>
+          </div>
+        ) : (
+          <div className="bg-background rounded-lg p-4 border border-border overflow-hidden relative">
+            <h4 className="font-medium text-sm mb-1">Upgrade to Pro</h4>
+            <p className="text-muted-foreground text-xs mb-3">Unlock all premium features</p>
+            <Link href="/subscribe">
+              <Button size="sm" className="w-full bg-primary text-black hover:shadow-[0_0_10px_rgba(252,238,9,0.5)]">
+                Upgrade Now
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </aside>
   );

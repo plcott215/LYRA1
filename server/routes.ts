@@ -69,15 +69,44 @@ const getUserFromRequest = async (req: Request) => {
 };
 
 // Check if user has a pro subscription
-const checkProSubscription = async (userId: number) => {
-  // Always return true - all users have Pro access now
-  return true;
+// Check if user has a Pro subscription
+const checkProSubscription = async (userId: number, userEmail: string) => {
+  // Special case for our demo Pro account
+  if (userEmail === "demo@lyra.app") {
+    return true;
+  }
+  
+  // For everyone else, check subscription status in database
+  try {
+    const subscription = await storage.getSubscription(userId);
+    return subscription && subscription.status === "active";
+  } catch (error) {
+    console.error("Error checking subscription status:", error);
+    return false;
+  }
 };
 
 // Calculate remaining trial days
 const getRemainingTrialDays = async (userId: number) => {
-  // Always return 0 since we're activating Pro access and don't need trial days
-  return 0;
+  // Get user from storage to check trial end date
+  try {
+    const user = await storage.getUser(userId);
+    if (user && user.trialEndsAt) {
+      const today = new Date();
+      const trialEnd = new Date(user.trialEndsAt);
+      
+      // Calculate days left in trial
+      if (trialEnd > today) {
+        return Math.ceil((trialEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    }
+    
+    // No trial days left
+    return 0;
+  } catch (error) {
+    console.error("Error calculating trial days:", error);
+    return 0;
+  }
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -87,9 +116,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Subscription status endpoint
   app.get('/api/subscription', async (req: Request, res: Response) => {
     try {
-      const userId = req.body.user.id;
-      const isPro = await checkProSubscription(userId);
+      const user = req.body.user;
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      const userId = user.id;
+      const userEmail = user.email || "";
+      
+      // Check if user has Pro access
+      const isPro = await checkProSubscription(userId, userEmail);
       const trialDaysLeft = await getRemainingTrialDays(userId);
+      
+      // Special case for our demo Pro user
+      if (userEmail === "demo@lyra.app") {
+        // For demo Pro account, return active subscription with long expiry
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setFullYear(startDate.getFullYear() + 5); // 5 years in the future
+        
+        return res.json({
+          isPro: true,
+          trialDaysLeft: 0,
+          subscriptionData: {
+            status: "active",
+            startDate: startDate,
+            endDate: endDate,
+            trialEnd: null
+          }
+        });
+      }
       
       // Get subscription data if it exists
       const subscription = await storage.getSubscription(userId);
