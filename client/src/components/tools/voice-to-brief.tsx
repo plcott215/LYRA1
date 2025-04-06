@@ -1,28 +1,157 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { generateBriefFromVoice, VoiceToBriefRequest } from "@/lib/openai";
 import { formatMarkdown } from "@/lib/utils";
-import { Copy as CopyIcon, RefreshCw as RefreshIcon, Sparkles, Mic as MicIcon } from "lucide-react";
+import { 
+  Copy as CopyIcon, 
+  RefreshCw as RefreshIcon, 
+  Sparkles, 
+  Mic as MicIcon,
+  MicOff as MicOffIcon,
+  StopCircle as StopIcon 
+} from "lucide-react";
+
+// Type declarations for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+  error: any;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  isFinal: boolean;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionEvent) => void) | null;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
 
 const VoiceToBrief = () => {
   const [text, setText] = useState("");
   const [brief, setBrief] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [generationTime, setGenerationTime] = useState<number | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(true);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { toast } = useToast();
+
+  // Check if browser supports Web Speech API
+  useEffect(() => {
+    const isSpeechRecognitionSupported = 'SpeechRecognition' in window || 
+      'webkitSpeechRecognition' in window;
+    
+    setSpeechRecognitionSupported(isSpeechRecognitionSupported);
+  }, []);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
+  };
+
+  const startSpeechRecognition = () => {
+    if (!speechRecognitionSupported) {
+      toast({
+        title: "Not supported",
+        description: "Speech recognition is not supported in your browser. Try Chrome, Edge, or Safari.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Initialize Web Speech API
+    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognitionAPI();
+    recognitionRef.current = recognition;
+    
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsRecording(true);
+      toast({
+        title: "Recording started",
+        description: "Speak clearly into your microphone",
+      });
+    };
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let transcript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setText(transcript);
+    };
+
+    recognition.onerror = (event: SpeechRecognitionEvent) => {
+      console.error('Speech recognition error', event.error);
+      stopSpeechRecognition();
+      
+      toast({
+        title: "Recording error",
+        description: event.error === 'not-allowed' 
+          ? "Microphone access denied. Please check your permissions." 
+          : `Error: ${event.error}`,
+        variant: "destructive",
+      });
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognition.start();
+  };
+
+  const stopSpeechRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+      toast({
+        title: "Recording stopped",
+        description: "You can now edit the text or generate a brief",
+      });
+    }
   };
 
   const handleGenerate = async () => {
     if (!text) {
       toast({
         title: "Missing information",
-        description: "Please enter text to generate a brief",
+        description: "Please enter text or record your voice to generate a brief",
         variant: "destructive",
       });
       return;
@@ -77,44 +206,59 @@ const VoiceToBrief = () => {
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-accent mr-2">
               Pro Feature
             </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-white animate-pulse">
-              Coming Soon
-            </span>
           </div>
         </CardContent>
       </Card>
-      
-      {/* Coming Soon Banner */}
-      <div className="relative mb-8 rounded-lg overflow-hidden">
-        <div className="bg-card rounded-lg border-2 border-yellow-600 p-8 text-center">
-          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-600 text-white mb-4 animate-pulse">
-            Coming Soon
-          </div>
-          <h3 className="text-xl font-bold mb-2">Voice-to-Brief Feature</h3>
-          <p className="text-muted-foreground mb-4">
-            We're working hard to bring you voice transcription and automatic brief generation.
-            This feature will be available in our next update.
-          </p>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-50 pointer-events-none">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Section */}
         <Card className="bg-card rounded-xl p-5 shadow-[0_0_10px_rgba(252,238,9,0.2)]">
           <CardContent className="p-0">
             <h3 className="text-lg font-medium mb-4">Voice Transcription</h3>
 
             <div className="space-y-5">
-              <div className="text-center p-6 border border-dashed border-border rounded-lg bg-background text-muted-foreground mb-4">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto mb-3 text-muted-foreground">
-                  <path d="M12 15.5C14.21 15.5 16 13.71 16 11.5V6C16 3.79 14.21 2 12 2C9.79 2 8 3.79 8 6V11.5C8 13.71 9.79 15.5 12 15.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M4.35 9.65V11.35C4.35 15.57 7.78 19 12 19C16.22 19 19.65 15.57 19.65 11.35V9.65" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M10.61 6.43C11.51 6.1 12.49 6.1 13.39 6.43" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M11.2 8.55C11.73 8.41 12.28 8.41 12.81 8.55" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 19V22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <p className="mb-3">Voice upload feature coming soon in the next update.</p>
-                <p className="text-sm">For now, please type your ideas below.</p>
+              <div className="flex justify-center p-6 border border-dashed border-border rounded-lg bg-background text-muted-foreground mb-4">
+                {isRecording ? (
+                  <Button 
+                    onClick={stopSpeechRecognition} 
+                    className="flex items-center justify-center p-4 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-all"
+                  >
+                    <StopIcon className="h-8 w-8" />
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={startSpeechRecognition} 
+                    disabled={!speechRecognitionSupported}
+                    className={`flex items-center justify-center p-4 ${
+                      speechRecognitionSupported 
+                        ? 'bg-primary text-black hover:shadow-[0_0_10px_rgba(252,238,9,0.8)]' 
+                        : 'bg-gray-400 text-gray-700'
+                    } rounded-full shadow-lg transition-all`}
+                    title={speechRecognitionSupported ? "Start recording" : "Speech recognition not supported in your browser"}
+                  >
+                    <MicIcon className="h-8 w-8" />
+                  </Button>
+                )}
+                <div className="ml-4 flex flex-col justify-center">
+                  {isRecording ? (
+                    <div>
+                      <div className="text-red-500 font-medium mb-2 flex items-center">
+                        <span className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
+                        Recording...
+                      </div>
+                      <p className="text-sm">Speak clearly into your microphone</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="font-medium mb-2">{speechRecognitionSupported ? "Click to start recording" : "Speech recognition not supported"}</p>
+                      <p className="text-sm">{
+                        speechRecognitionSupported 
+                          ? "Or type your project ideas below" 
+                          : "Please use Chrome, Edge, or Safari for voice recording"
+                      }</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -124,7 +268,7 @@ const VoiceToBrief = () => {
                   onChange={handleTextChange}
                   rows={8}
                   className="w-full bg-background border-border focus:ring-primary resize-none"
-                  placeholder="Type what you would have said about the project..."
+                  placeholder="Type or record your ideas for the project..."
                 />
               </div>
 
