@@ -207,7 +207,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gray-800">
+      <section className="py-20 bg-gray-950">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6 text-white">
@@ -228,7 +228,7 @@ const Home = () => {
                 onClick={() => navigate("/pricing")} 
                 variant="outline" 
                 size="lg"
-                className="border-gray-300 text-gray-200 hover:bg-gray-700"
+                className="border-gray-200 text-white hover:bg-gray-800"
               >
                 View Plans
               </Button>
