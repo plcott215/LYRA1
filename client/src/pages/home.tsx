@@ -135,8 +135,9 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-950">
-        <div className="container mx-auto px-4">
+      <section className="py-20 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-primary via-transparent to-transparent"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 text-white">
               Essential <span className="text-primary">AI Tools</span> for Freelancers
@@ -156,6 +157,7 @@ const Home = () => {
                 transition={{ duration: 0.4, delay: 0.1 * index }}
                 whileHover={{ 
                   y: -5,
+                  boxShadow: "0 0 15px rgba(252,238,9,0.3)",
                   transition: { duration: 0.2 }
                 }}
               >
@@ -173,13 +175,14 @@ const Home = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-20 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-primary via-transparent to-transparent"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-bold mb-4 text-white">
               What <span className="text-primary">Freelancers</span> Say
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-gray-300 text-lg">
               Join thousands of freelancers who've transformed their workflow with Lyra.
             </p>
           </div>
@@ -192,6 +195,11 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 * index }}
+                whileHover={{ 
+                  y: -5,
+                  boxShadow: "0 0 15px rgba(252,238,9,0.3)",
+                  transition: { duration: 0.2 }
+                }}
               >
                 <div className="mb-4 text-primary">
                   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
@@ -207,8 +215,9 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gray-950">
-        <div className="container mx-auto px-4">
+      <section className="py-20 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-primary via-transparent to-transparent"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6 text-white">
               Ready to Elevate Your <span className="text-primary">Freelance Business</span>?
@@ -228,7 +237,7 @@ const Home = () => {
                 onClick={() => navigate("/pricing")} 
                 variant="outline" 
                 size="lg"
-                className="border-gray-200 text-white hover:bg-gray-800"
+                className="border-gray-200 text-white hover:bg-gray-800 hover:shadow-[0_0_10px_rgba(252,238,9,0.3)]"
               >
                 View Plans
               </Button>
