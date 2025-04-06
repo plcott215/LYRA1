@@ -134,13 +134,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Slanted Divider */}
-      <div className="relative h-24 bg-gradient-to-b from-background to-black">
-        <div className="absolute w-full h-24 bg-black" style={{ clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0 100%)' }}></div>
-      </div>
-
       {/* Features Section */}
-      <section className="py-20 bg-black relative overflow-hidden -mt-1">
+      <section className="py-20 bg-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-primary via-transparent to-transparent"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center mb-16">
@@ -178,15 +173,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Wave Divider */}
-      <div className="relative h-16 bg-black overflow-hidden">
-        <div className="absolute w-full bottom-0 left-0">
-          <svg className="w-full h-16 text-primary fill-current opacity-10" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
-          </svg>
-        </div>
-      </div>
 
       {/* Testimonials */}
       <section className="py-20 bg-black relative overflow-hidden">
@@ -228,14 +214,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Diagonal Divider */}
-      <div className="relative h-16 bg-black overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-full h-px bg-primary bg-opacity-20 transform rotate-1"></div>
-          <div className="w-full h-px bg-primary bg-opacity-20 transform -rotate-1 mt-6"></div>
-        </div>
-      </div>
-
       {/* CTA Section */}
       <section className="py-20 bg-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-primary via-transparent to-transparent"></div>
@@ -268,13 +246,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Curved Divider */}
-      <div className="relative h-24 bg-black">
-        <div className="absolute bottom-0 left-0 w-full h-24 bg-background" style={{ clipPath: 'ellipse(80% 100% at 50% 100%)' }}></div>
-      </div>
-
       {/* Footer */}
-      <footer className="py-12 bg-background">
+      <footer className="py-12 border-t border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-8 md:mb-0">
