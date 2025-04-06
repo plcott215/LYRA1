@@ -20,17 +20,44 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+let app;
+let auth;
+let googleProvider;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+  // Create fallbacks to prevent app crashes
+  app = {};
+  auth = { 
+    currentUser: null,
+    onAuthStateChanged: () => () => {},
+    signInWithEmailAndPassword: () => Promise.reject(new Error("Authentication is currently unavailable")),
+    createUserWithEmailAndPassword: () => Promise.reject(new Error("Authentication is currently unavailable")),
+    signOut: () => Promise.resolve()
+  } as any;
+  googleProvider = {} as any;
+}
 
 // Auth functions
 export const signInWithGoogle = async () => {
   try {
+    // Check if Firebase is properly configured before attempting sign-in
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || 
+        !import.meta.env.VITE_FIREBASE_PROJECT_ID ||
+        !import.meta.env.VITE_FIREBASE_APP_ID) {
+      throw new Error("Firebase configuration is missing. Please use email sign-in instead.");
+    }
+    
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
   } catch (error: any) {
-    throw new Error(error.message);
+    console.error("Firebase Google sign-in error:", error);
+    // Preserve the original error message
+    throw error;
   }
 };
 

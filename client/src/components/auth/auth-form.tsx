@@ -51,11 +51,23 @@ const AuthForm = () => {
       await signInWithGoogle();
       setLocation("/dashboard");
     } catch (error: any) {
-      toast({
-        title: "Authentication Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error("Google auth error:", error);
+      
+      // Check for configuration errors and provide helpful message
+      if (error.message.includes("configuration-not-found") || 
+          error.message.includes("auth/configuration")) {
+        toast({
+          title: "Sign-in temporarily unavailable",
+          description: "Google sign-in is currently unavailable. Please use email sign-in instead.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Authentication Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +136,7 @@ const AuthForm = () => {
 
             <Button
               type="submit"
-              className="w-full bg-primary text-primary-foreground hover:shadow-[0_0_10px_rgba(252,238,9,0.5)] transition-all duration-200"
+              className="w-full bg-primary text-primary-foreground hover:shadow-[0_0_10px_rgba(252,238,9,0.5)] transition-all duration-200 relative overflow-hidden"
               disabled={isLoading}
             >
               {isLoading ? (
