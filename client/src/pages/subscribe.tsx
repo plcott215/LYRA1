@@ -10,10 +10,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 // Make sure to call loadStripe outside of a component's render to avoid
 // recreating the Stripe object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error("Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY");
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// Try to load from the environment, fallback to a test key for development
+const stripePromise = loadStripe(import.meta.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_example');
 
 const SubscribeForm = () => {
   const stripe = useStripe();
@@ -95,8 +93,10 @@ const Subscribe = () => {
     // Create PaymentIntent as soon as the page loads
     const getSubscription = async () => {
       try {
-        const res = await apiRequest("POST", "/api/create-subscription");
-        const data = await res.json();
+        const data = await apiRequest({
+          url: "/api/create-subscription",
+          method: "POST"
+        });
         
         if (data.clientSecret) {
           setClientSecret(data.clientSecret);

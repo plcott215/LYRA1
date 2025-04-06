@@ -556,10 +556,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cancelAtPeriodEnd: false,
       });
       
-      // Return success with fake subscription data
+      // Return clientSecret to match what the frontend is expecting
       res.json({
         success: true,
         message: "Pro access granted",
+        clientSecret: "demo_secret_" + Math.random().toString(36).substring(2, 15),
         subscriptionId: fakeDemoId,
         status: "active",
         isPro: true
