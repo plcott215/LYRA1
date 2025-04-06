@@ -135,13 +135,13 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-card">
+      <section className="py-20 bg-gray-950">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-bold mb-4 text-white">
               Essential <span className="text-primary">AI Tools</span> for Freelancers
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-gray-300 text-lg">
               Streamline your workflow and elevate your freelance business with our specialized AI assistants.
             </p>
           </div>
