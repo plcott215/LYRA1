@@ -275,7 +275,7 @@ const Home = () => {
             </div>
           </div>
           <div className="border-t border-border mt-12 pt-8 text-center text-muted-foreground">
-            <p>© {new Date().getFullYear()} Lyra. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Lyra. All rights reserved. Powered by Arqx.</p>
           </div>
         </div>
       </footer>
