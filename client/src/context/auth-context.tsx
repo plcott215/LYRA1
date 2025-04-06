@@ -2,8 +2,10 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { onAuthStateChange } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
 
-// Admin credentials
+// Admin and demo credentials
 const ADMIN_EMAIL = "admin@lyra.app";
+const DEMO_EMAIL = "demo@lyra.app";
+const DEMO_MODE = true; // Set to true to enable demo mode
 
 interface AuthContextProps {
   user: FirebaseUser | null;
@@ -57,16 +59,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setErrorState("auth-config-missing");
       }
       
-      // Subscribe to auth state changes
-      unsubscribe = onAuthStateChange((user) => {
-        console.log("Auth state changed:", user ? "Logged in" : "Not logged in");
-        setUser(user);
+      // Handle demo mode if enabled
+      if (DEMO_MODE) {
+        console.log("Demo mode enabled - creating mock demo user");
+        // Create a mock user object for demo mode
+        const mockDemoUser = {
+          uid: "demo-user-123",
+          email: DEMO_EMAIL,
+          displayName: "Demo User",
+          emailVerified: true,
+          isAnonymous: false,
+          metadata: {
+            creationTime: new Date().toISOString(),
+            lastSignInTime: new Date().toISOString()
+          }
+        } as unknown as FirebaseUser;
         
-        // Check if user is admin
-        setIsAdmin(user?.email === ADMIN_EMAIL);
-        
-        setLoading(false);
-      });
+        // Set the user with a slight delay to simulate authentication
+        setTimeout(() => {
+          setUser(mockDemoUser);
+          setIsAdmin(false); // Demo users are not admins by default
+          setLoading(false);
+        }, 1000);
+      } 
+      else {
+        // Regular Firebase authentication 
+        unsubscribe = onAuthStateChange((user) => {
+          console.log("Auth state changed:", user ? "Logged in" : "Not logged in");
+          setUser(user);
+          
+          // Check if user is admin
+          setIsAdmin(user?.email === ADMIN_EMAIL);
+          
+          setLoading(false);
+        });
+      }
       
       // Ensure loading state is set to false after a timeout
       // This prevents infinite loading if Firebase has issues

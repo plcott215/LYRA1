@@ -9,7 +9,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 
-// Regular authentication will be used, no hardcoded credentials
+// Demo mode credentials for quick access without Firebase
+const DEMO_EMAIL = "demo@lyra.app";
+const DEMO_PASSWORD = "demo123";
+const DEMO_MODE = true; // Set to true to enable demo mode
 
 const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -38,7 +41,38 @@ const AuthForm = () => {
     setIsLoading(true);
 
     try {
-      // Regular user authentication
+      // Demo mode authentication (no Firebase required)
+      if (DEMO_MODE) {
+        // For demo mode, check if credentials match the demo account
+        if (!isSignUp && email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+          // Successful demo login
+          toast({
+            title: "Demo Login Successful",
+            description: "Welcome to Lyra! You are using demo mode.",
+          });
+          setLocation("/dashboard");
+          return;
+        } else if (isSignUp) {
+          // Allow sign up in demo mode
+          toast({
+            title: "Account created successfully!",
+            description: "Welcome to Lyra! You are in demo mode.",
+          });
+          setLocation("/dashboard");
+          return;
+        } else {
+          // Failed demo login
+          toast({
+            title: "Authentication Error",
+            description: "For demo access, use email: demo@lyra.app and password: demo123",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Regular user authentication (only if demo mode is off)
       if (isSignUp) {
         await signUpWithEmail(email, password);
         toast({
@@ -83,6 +117,18 @@ const AuthForm = () => {
     setIsLoading(true);
     
     try {
+      // Demo mode Google authentication (no Firebase required)
+      if (DEMO_MODE) {
+        // For demo mode, allow direct login
+        toast({
+          title: "Demo Google Login Successful",
+          description: "Welcome to Lyra! You are using demo mode.",
+        });
+        setLocation("/dashboard");
+        return;
+      }
+      
+      // Regular authentication (only if demo mode is off)
       await signInWithGoogle();
       setLocation("/dashboard");
     } catch (error: any) {
@@ -131,6 +177,16 @@ const AuthForm = () => {
       </div>
 
       <div className="bg-card rounded-xl p-6 relative overflow-hidden shadow-[0_0_15px_rgba(252,238,9,0.2)]">
+        {DEMO_MODE && (
+          <Alert className="mb-4 border-primary bg-primary/10">
+            <AlertCircle className="h-4 w-4 text-primary" />
+            <AlertTitle className="text-primary">Demo Mode Active</AlertTitle>
+            <AlertDescription>
+              Use email: <span className="font-mono">demo@lyra.app</span> and password: <span className="font-mono">demo123</span> to sign in, 
+              or click the Google button for instant access.
+            </AlertDescription>
+          </Alert>
+        )}
         {showConfigError && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />

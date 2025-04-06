@@ -3,6 +3,10 @@ import { useAuth } from "./auth-context";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+// Demo mode settings
+const DEMO_MODE = true; // Sync with auth-context
+const DEMO_EMAIL = "demo@lyra.app"; // Demo account email
+
 // Define the subscription response type
 interface SubscriptionResponse {
   isPro: boolean;
@@ -58,6 +62,26 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
   const checkSubscription = async () => {
     if (!user) {
       setIsPro(false);
+      setLoading(false);
+      return;
+    }
+    
+    // For demo mode, we'll automatically set a Pro subscription
+    if (DEMO_MODE && user?.email === DEMO_EMAIL) {
+      console.log("Demo user detected - setting Pro subscription automatically");
+      
+      // Set a mock Pro subscription for demo users
+      const currentDate = new Date();
+      const futureDate = new Date();
+      futureDate.setMonth(futureDate.getMonth() + 1); // 1 month subscription
+      
+      setIsPro(true);
+      setTrialDaysLeft(0); // No trial needed for demo Pro
+      setSubscriptionData({
+        status: "active",
+        startDate: currentDate.toISOString(),
+        endDate: futureDate.toISOString()
+      });
       setLoading(false);
       return;
     }
