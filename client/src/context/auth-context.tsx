@@ -39,6 +39,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       console.log("Initializing auth state...");
       
+      // Debug: Log environment variables (redacted for security)
+      console.log("Firebase config check:", {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? "✓ Present" : "✗ Missing",
+        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ? "✓ Present" : "✗ Missing",
+        appId: import.meta.env.VITE_FIREBASE_APP_ID ? "✓ Present" : "✗ Missing"
+      });
+      
       // Check if Firebase environment variables are configured
       const isFirebaseConfigured = 
         import.meta.env.VITE_FIREBASE_API_KEY && 
