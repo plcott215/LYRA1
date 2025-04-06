@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithApple } from "@/lib/firebase";
+import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/firebase";
 
 // Regular authentication will be used, no hardcoded credentials
 
@@ -61,22 +61,7 @@ const AuthForm = () => {
     }
   };
   
-  const handleAppleAuth = async () => {
-    setIsLoading(true);
-    
-    try {
-      await signInWithApple();
-      setLocation("/dashboard");
-    } catch (error: any) {
-      toast({
-        title: "Authentication Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // No Apple sign-in needed
 
   return (
     <div className="w-full max-w-md">
@@ -172,19 +157,6 @@ const AuthForm = () => {
               <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335"/>
             </svg>
             Google
-          </Button>
-          
-          <Button
-            type="button"
-            onClick={handleAppleAuth}
-            className="w-full bg-background border border-border text-white hover:bg-muted transition-all duration-200 flex items-center justify-center gap-2"
-            disabled={isLoading}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12.9545 9.56918C12.9436 8.11405 13.5774 7.04918 14.859 6.35042C14.139 5.34708 13.0469 4.80792 11.6138 4.72373C10.25 4.6416 8.98608 5.4941 8.46582 5.4941C7.92261 5.4941 6.82044 4.7538 5.69977 4.7538C3.58111 4.77676 1.35001 6.52655 1.35001 10.088C1.35001 11.1949 1.53755 12.3381 1.91263 13.5177C2.4126 15.0686 3.9596 18 5.56104 17.9479C6.4245 17.9229 7.04217 17.2805 8.16688 17.2805C9.2551 17.2805 9.82301 17.9479 10.8156 17.9479C12.4375 17.922 13.8125 15.2983 14.2862 13.7434C12.4375 12.8525 11.3596 11.3183 12.9545 9.56918Z" fill="black"/>
-              <path d="M10.4687 3.81452C11.0724 3.08073 11.4584 2.09035 11.3506 1.08997C10.467 1.13647 9.41852 1.65229 8.76138 2.36416C8.1658 3.01097 7.70271 4.0228 7.83334 4.99124C8.78975 5.06249 9.82299 4.58937 10.4687 3.81452Z" fill="black"/>
-            </svg>
-            Apple
           </Button>
         </div>
 

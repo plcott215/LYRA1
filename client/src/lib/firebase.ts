@@ -5,7 +5,6 @@ import {
   createUserWithEmailAndPassword, 
   signOut as firebaseSignOut,
   GoogleAuthProvider,
-  OAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
   User as FirebaseUser
@@ -24,7 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
-const appleProvider = new OAuthProvider('apple.com');
 
 // Auth functions
 export const signInWithGoogle = async () => {
@@ -36,14 +34,7 @@ export const signInWithGoogle = async () => {
   }
 };
 
-export const signInWithApple = async () => {
-  try {
-    const result = await signInWithPopup(auth, appleProvider);
-    return result.user;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
+// Apple sign-in removed
 
 export const signInWithEmail = async (email: string, password: string) => {
   try {
