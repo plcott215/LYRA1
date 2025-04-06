@@ -5,7 +5,7 @@ import ProposalWriter from "@/components/tools/proposal-writer";
 import EmailRewriter from "@/components/tools/email-rewriter";
 import PricingAssistant from "@/components/tools/pricing-assistant";
 import ContractExplainer from "@/components/tools/contract-explainer";
-import VoiceToBrief from "@/components/tools/voice-to-brief";
+import { VoiceToBrief } from "@/components/tools/voice-to-brief";
 import { ClientOnboarding } from "../components/tools/client-onboarding";
 import { HistoryPage } from "@/components/history/history-page";
 import { SettingsPage } from "@/components/settings/settings-page";

@@ -59,7 +59,7 @@ declare global {
   }
 }
 
-const VoiceToBrief = () => {
+export function VoiceToBrief() {
   const [text, setText] = useState("");
   const [brief, setBrief] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -384,4 +384,3 @@ const VoiceToBrief = () => {
   );
 };
 
-export default VoiceToBrief;

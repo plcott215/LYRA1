@@ -53,31 +53,49 @@ export interface ClientOnboardingRequest {
 
 // API client functions
 export const generateProposal = async (data: ProposalRequest): Promise<OpenAIResponse> => {
-  const response = await apiRequest('POST', '/api/tools/proposal', data);
-  return response.json();
+  return await apiRequest({
+    url: '/api/tools/proposal',
+    method: 'POST',
+    body: data
+  });
 };
 
 export const rewriteEmail = async (data: EmailRewriteRequest): Promise<OpenAIResponse> => {
-  const response = await apiRequest('POST', '/api/tools/email', data);
-  return response.json();
+  return await apiRequest({
+    url: '/api/tools/email',
+    method: 'POST',
+    body: data
+  });
 };
 
 export const getPricingEstimate = async (data: PricingRequest): Promise<OpenAIResponse> => {
-  const response = await apiRequest('POST', '/api/tools/pricing', data);
-  return response.json();
+  return await apiRequest({
+    url: '/api/tools/pricing',
+    method: 'POST',
+    body: data
+  });
 };
 
 export const explainContract = async (data: ContractExplainRequest): Promise<OpenAIResponse> => {
-  const response = await apiRequest('POST', '/api/tools/contract', data);
-  return response.json();
+  return await apiRequest({
+    url: '/api/tools/contract',
+    method: 'POST',
+    body: data
+  });
 };
 
 export const generateBriefFromVoice = async (data: VoiceToBriefRequest): Promise<OpenAIResponse> => {
-  const response = await apiRequest('POST', '/api/tools/brief', data);
-  return response.json();
+  return await apiRequest({
+    url: '/api/tools/brief',
+    method: 'POST',
+    body: data
+  });
 };
 
 export const generateClientOnboarding = async (data: ClientOnboardingRequest): Promise<OpenAIResponse> => {
-  const response = await apiRequest('POST', '/api/tools/onboarding', data);
-  return response.json();
+  return await apiRequest({
+    url: '/api/tools/onboarding',
+    method: 'POST',
+    body: data
+  });
 };
