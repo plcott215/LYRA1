@@ -6,11 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/firebase";
 
-// Test login credentials - in a real app, these would be stored securely and not in frontend code
-const ADMIN_EMAIL = "admin@lyra.app";
-const ADMIN_PASSWORD = "admin123";
-const DEMO_EMAIL = "demo@lyra.app";
-const DEMO_PASSWORD = "demo123";
+// Regular authentication will be used, no hardcoded credentials
 
 const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -26,26 +22,6 @@ const AuthForm = () => {
     setIsLoading(true);
 
     try {
-      // Check for admin or demo credentials
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        toast({
-          title: "Admin Login Successful",
-          description: "You now have access to all Pro features!",
-        });
-        setLocation("/dashboard");
-        return;
-      }
-      
-      // Check for demo user credentials
-      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
-        toast({
-          title: "Demo Pro User Login",
-          description: "You now have access to all Pro features!",
-        });
-        setLocation("/dashboard");
-        return;
-      }
-      
       // Regular user authentication
       if (isSignUp) {
         await signUpWithEmail(email, password);
@@ -85,17 +61,7 @@ const AuthForm = () => {
     }
   };
   
-  // Handle demo login with Pro access
-  const handleDemoLogin = () => {
-    setEmail(DEMO_EMAIL);
-    setPassword(DEMO_PASSWORD);
-    
-    // Submit the form after setting the values
-    setTimeout(() => {
-      const submitEvent = { preventDefault: () => {} } as React.FormEvent;
-      handleEmailAuth(submitEvent);
-    }, 100);
-  };
+  // No demo login needed
 
   return (
     <div className="w-full max-w-md">
@@ -178,20 +144,6 @@ const AuthForm = () => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button
-            type="button"
-            onClick={handleDemoLogin}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-200 flex items-center justify-center gap-2"
-            disabled={isLoading}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M12 8v8" />
-              <path d="M8 12h8" />
-            </svg>
-            Demo Pro Login
-          </Button>
-          
           <Button
             type="button"
             onClick={handleGoogleAuth}
