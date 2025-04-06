@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/firebase";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 // Regular authentication will be used, no hardcoded credentials
 
@@ -14,8 +17,21 @@ const AuthForm = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfigError, setShowConfigError] = useState(false);
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
+  const { authError } = useAuth();
+  
+  // Check for authentication configuration issues
+  useEffect(() => {
+    if (authError && (
+      authError === "auth-config-missing" || 
+      authError === "auth-init-error" || 
+      authError === "auth-timeout-long"
+    )) {
+      setShowConfigError(true);
+    }
+  }, [authError]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,9 +50,28 @@ const AuthForm = () => {
       }
       setLocation("/dashboard");
     } catch (error: any) {
+      console.error("Email auth error:", error);
+      
+      // Provide a more user-friendly error message
+      let errorMessage = error.message;
+      let errorTitle = "Authentication Error";
+      
+      // Check for specific error messages to provide better feedback
+      if (error.message.includes("configuration-not-found") || 
+          error.message.includes("temporarily unavailable")) {
+        errorTitle = "Service Temporarily Unavailable";
+        errorMessage = "Our authentication service is currently unavailable. Please try again later.";
+      } else if (error.message.includes("wrong-password")) {
+        errorMessage = "Incorrect email or password. Please try again.";
+      } else if (error.message.includes("user-not-found")) {
+        errorMessage = "No account found with this email address.";
+      } else if (error.message.includes("email-already-in-use")) {
+        errorMessage = "An account with this email already exists.";
+      }
+      
       toast({
-        title: "Authentication Error",
-        description: error.message,
+        title: errorTitle,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -53,21 +88,32 @@ const AuthForm = () => {
     } catch (error: any) {
       console.error("Google auth error:", error);
       
-      // Check for configuration errors and provide helpful message
+      // Provide user-friendly error messages based on error types
+      let errorTitle = "Authentication Error";
+      let errorMessage = error.message;
+      
+      // Handle various error scenarios
       if (error.message.includes("configuration-not-found") || 
-          error.message.includes("auth/configuration")) {
-        toast({
-          title: "Sign-in temporarily unavailable",
-          description: "Google sign-in is currently unavailable. Please use email sign-in instead.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Authentication Error",
-          description: error.message,
-          variant: "destructive",
-        });
+          error.message.includes("auth/configuration") ||
+          error.message.includes("Firebase configuration is missing")) {
+        errorTitle = "Google Sign-in Unavailable";
+        errorMessage = "Google sign-in is currently unavailable. Please use email sign-in instead.";
+      } else if (error.code === "auth/popup-closed-by-user") {
+        errorTitle = "Sign-in Cancelled";
+        errorMessage = "You closed the sign-in window. Please try again if you want to sign in.";
+      } else if (error.code === "auth/popup-blocked") {
+        errorTitle = "Popup Blocked";
+        errorMessage = "Sign-in popup was blocked by your browser. Please allow popups for this site and try again.";
+      } else if (error.code === "auth/network-request-failed") {
+        errorTitle = "Network Error";
+        errorMessage = "A network error occurred. Please check your connection and try again.";
       }
+      
+      toast({
+        title: errorTitle,
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -85,6 +131,16 @@ const AuthForm = () => {
       </div>
 
       <div className="bg-card rounded-xl p-6 relative overflow-hidden shadow-[0_0_15px_rgba(252,238,9,0.2)]">
+        {showConfigError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Authentication Configuration Issue</AlertTitle>
+            <AlertDescription>
+              The authentication service is currently experiencing configuration issues. 
+              Some sign-in methods may not work properly. You can still try to sign in with email and password.
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-4">
             {isSignUp ? "Create an account" : "Sign in to your account"}

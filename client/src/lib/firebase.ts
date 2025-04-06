@@ -19,10 +19,14 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Define appropriate types
+import { FirebaseApp } from 'firebase/app';
+import { Auth } from 'firebase/auth';
+
 // Initialize Firebase
-let app;
-let auth;
-let googleProvider;
+let app: FirebaseApp;
+let auth: Auth;
+let googleProvider: GoogleAuthProvider;
 
 try {
   app = initializeApp(firebaseConfig);
@@ -30,16 +34,20 @@ try {
   googleProvider = new GoogleAuthProvider();
 } catch (error) {
   console.error("Firebase initialization error:", error);
-  // Create fallbacks to prevent app crashes
-  app = {};
-  auth = { 
+  // Create a simplified mock Auth object with only the minimal required properties
+  // This approach avoids type errors with missing properties
+  const mockAuth = {
     currentUser: null,
     onAuthStateChanged: () => () => {},
-    signInWithEmailAndPassword: () => Promise.reject(new Error("Authentication is currently unavailable")),
-    createUserWithEmailAndPassword: () => Promise.reject(new Error("Authentication is currently unavailable")),
-    signOut: () => Promise.resolve()
-  } as any;
-  googleProvider = {} as any;
+    // Add app reference
+    app: {} as FirebaseApp,
+    name: 'mock-auth'
+  } as unknown as Auth;
+
+  // Initialize fallbacks
+  app = {} as FirebaseApp;
+  auth = mockAuth;
+  googleProvider = new GoogleAuthProvider();
 }
 
 // Auth functions
@@ -65,18 +73,42 @@ export const signInWithGoogle = async () => {
 
 export const signInWithEmail = async (email: string, password: string) => {
   try {
+    // Check if Firebase is properly configured before attempting sign-in
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || 
+        !import.meta.env.VITE_FIREBASE_PROJECT_ID ||
+        !import.meta.env.VITE_FIREBASE_APP_ID) {
+      throw new Error("Firebase configuration is missing. Please contact support.");
+    }
+    
     const result = await signInWithEmailAndPassword(auth, email, password);
     return result.user;
   } catch (error: any) {
+    console.error("Firebase email sign-in error:", error);
+    // Handle configuration errors specially
+    if (error.code === "auth/configuration-not-found") {
+      throw new Error("Authentication service is temporarily unavailable. Please try again later.");
+    }
     throw new Error(error.message);
   }
 };
 
 export const signUpWithEmail = async (email: string, password: string) => {
   try {
+    // Check if Firebase is properly configured before attempting sign-up
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || 
+        !import.meta.env.VITE_FIREBASE_PROJECT_ID ||
+        !import.meta.env.VITE_FIREBASE_APP_ID) {
+      throw new Error("Firebase configuration is missing. Please contact support.");
+    }
+    
     const result = await createUserWithEmailAndPassword(auth, email, password);
     return result.user;
   } catch (error: any) {
+    console.error("Firebase email sign-up error:", error);
+    // Handle configuration errors specially
+    if (error.code === "auth/configuration-not-found") {
+      throw new Error("Account creation is temporarily unavailable. Please try again later.");
+    }
     throw new Error(error.message);
   }
 };
